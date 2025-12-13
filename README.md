@@ -1,4 +1,15 @@
-# AshLibWorkspace
+# Ash UI Lib
+
+Enterprise-grade reusable Angular components for high-performance dashboards and data-heavy apps. Built on Angular 20+ and Material with full accessibility, theming, and Storybook docs.
+
+**Core Components:**
+
+- **AshTable**: Advanced data grids (10K+ rows, server pagination, sorting)
+- **AshForm**: Schema-driven dynamic forms (wizards, validation)
+- **AshCalendar**: Event calendars with color-coded dates
+
+**Purpose**: Accelerate development of professional UIs with ready-to-use, customizable components for your `ash-new-lib` library.
+
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
 
