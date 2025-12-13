@@ -1,70 +1,59 @@
 # Ash UI Lib
+Enterprise Angular components for high-performance dashboards. Angular 20+, Material Design 3, ECharts. 148KB bundle, WCAG 2.1 AA.
 
-Enterprise-grade reusable Angular components for high-performance dashboards and data-heavy apps. Built on Angular 20+ and Material with full accessibility, theming, and Storybook docs.
+**Status:** 🏗️ Requirements complete. Building components (Week 1-4).
 
-**Core Components:**
+## Components
 
-- **AshTable**: Advanced data grids (10K+ rows, server pagination, sorting)
-- **AshForm**: Schema-driven dynamic forms (wizards, validation)
-- **AshCalendar**: Event calendars with color-coded dates
+| Component | Status |
+| :-- | :-- |
+| **AshDataGrid** | 10K+ rows, server pagination, Excel export |
+| **AshDynamicForm** | JSON schema forms, wizards |
+| **AshMultiChart** | 9 ECharts types, real-time |
+| **AshCalendar** | Event color-coding |
+| **AshDashboard** | Drag-drop layout composer |
+| **AshToast** | Rich notifications |
 
-**Purpose**: Accelerate development of professional UIs with ready-to-use, customizable components for your `ash-new-lib` library.
-
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Quick Start
 
 ```bash
-ng generate component component-name
+ng new ash-ui-workspace --no-create-application
+ng generate library ash-ui-lib --primary
+npx storybook@latest init  # Select ash-ui-lib
+npm run storybook          # http://localhost:6006
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+## Development
 
 ```bash
-ng generate --help
+# Generate component
+ng g c ash-datagrid --project=ash-ui-lib --standalone
+
+# Build & test
+ng build ash-ui-lib --configuration production
+npm run storybook
 ```
 
-## Building
 
-To build the project run:
+## Documentation
 
-```bash
-ng build
+- [Requirements](/docs/)
+- [Performance Benchmarks](/perf/)
+- [Storybook Stories](/storybook-static)
+
+
+## Roadmap
+
+```
+Week 1: AshDataGrid
+Week 2: AshDynamicForm + AshMultiChart  
+Week 3: AshDashboard + AshCalendar
+Week 4: AshToast + npm publish
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-## Running unit tests
+***
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+**Production dashboards in 5 components. 60fps performance.**
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
