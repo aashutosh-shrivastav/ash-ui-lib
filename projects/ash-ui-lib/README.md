@@ -1,63 +1,60 @@
-# AshUiLib
+# Ash UI Lib
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+Enterprise Angular components for high-performance dashboards. Angular 20+, Material Design 3, ECharts. 148KB bundle, WCAG 2.1 AA.
 
-## Code scaffolding
+**Status:** 🏗️ Requirements complete. Building components (Week 1-4).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Components
 
-```bash
-ng generate component component-name
-```
+| Component | Status |
+| :-- | :-- |
+| **AshDataGrid** | 10K+ rows, server pagination, Excel export |
+| **AshDynamicForm** | JSON schema forms, wizards |
+| **AshMultiChart** | 9 ECharts types, real-time |
+| **AshCalendar** | Event color-coding |
+| **AshDashboard** | Drag-drop layout composer |
+| **AshToast** | Rich notifications |
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the library, run:
+## Quick Start
 
 ```bash
-ng build ash-ui-lib
+ng new ash-ui-workspace --no-create-application
+ng generate library ash-ui-lib --primary
+npx storybook@latest init  # Select ash-ui-lib
+npm run storybook          # http://localhost:6006
 ```
 
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
 
-### Publishing the Library
-
-Once the project is built, you can publish your library by following these steps:
-
-1. Navigate to the `dist` directory:
-   ```bash
-   cd dist/ash-ui-lib
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Development
 
 ```bash
-ng test
+# Generate component
+ng g c ash-datagrid --project=ash-ui-lib --standalone
+
+# Build & test
+ng build ash-ui-lib --configuration production
+npm run storybook
 ```
 
-## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
+## Documentation
 
-```bash
-ng e2e
+- [Requirements](/docs/)
+- [Performance Benchmarks](/perf/)
+- [Storybook Stories](/storybook-static)
+
+
+## Roadmap
+
+```
+Week 1: AshDataGrid
+Week 2: AshDynamicForm + AshMultiChart  
+Week 3: AshDashboard + AshCalendar
+Week 4: AshToast + npm publish
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## Additional Resources
+***
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**Production dashboards in 5 components. 60fps performance.**
+
