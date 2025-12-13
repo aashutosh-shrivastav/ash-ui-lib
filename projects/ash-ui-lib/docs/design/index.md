@@ -13,3 +13,6 @@ The Form component provides a way to collect user input. It includes various inp
 ### Calendar
 The Calendar component allows users to select dates and view events. It supports month, week, and day views, as well as event creation and editing.
 [Link to Calendar Requirements](./calendar/requirements.md)
+### Charts
+The Charts component allows users to visualize data in various chart types. It supports line, bar, pie, and other chart types with features like zooming, tooltips, and legends.
+[Link to Charts Requirements](./chart/requirements.md)
