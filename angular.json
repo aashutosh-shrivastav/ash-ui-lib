@@ -61,6 +61,11 @@
             "outputDir": "storybook-static"
           }
         }
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
       }
     }
   }

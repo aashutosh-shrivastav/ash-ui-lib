@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'lib-ash-form',
   imports: [],
   templateUrl: './ash-form.html',
-  styleUrl: './ash-form.css',
+  styleUrl: './ash-form.scss',
 })
 export class AshForm {
 
