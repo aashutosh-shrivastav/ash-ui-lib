@@ -5,7 +5,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
   selector: 'lib-ash-calander',
   imports: [MatDatepickerModule],
   templateUrl: './ash-calander.html',
-  styleUrl: './ash-calander.css',
+  styleUrl: './ash-calander.scss',
 })
 export class AshCalander {
 

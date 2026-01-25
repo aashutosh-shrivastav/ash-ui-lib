@@ -63,7 +63,7 @@ AshTable is a **standalone, signal-based** enterprise table component built on A
 projects/ash-ui-lib/src/lib/ash-table/
 ├── ash-table.ts                    # Main component
 ├── ash-table.html                  # Template (built-in @if/@for)
-├── ash-table.css                   # Component styles
+├── ash-table.scss                   # Component styles
 ├── ash-table.spec.ts               # Unit tests
 ├── models/
 │   ├── column-def.model.ts         # Column configuration interface
@@ -770,7 +770,7 @@ import { CdkVirtualScrollingModule } from '@angular/cdk/scrolling';
     // Other standalone imports
   ],
   templateUrl: './ash-table.html',
-  styleUrl: './ash-table.css',
+  styleUrl: './ash-table.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.ash-table-loading]': 'loading()',

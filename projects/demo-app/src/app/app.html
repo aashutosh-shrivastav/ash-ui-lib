@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+	<span>Ash UI Demo App</span>
+	<span class="spacer"></span>
+	<button mat-icon-button (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
+		<mat-icon>{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+	</button>
+	<nav>
+		<a mat-button routerLink="/demo" routerLinkActive="active">Demo</a>
+		<a mat-button routerLink="/playground" routerLinkActive="active">Playground</a>
+		<a mat-button routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+	</nav>
+</mat-toolbar>
+<router-outlet />

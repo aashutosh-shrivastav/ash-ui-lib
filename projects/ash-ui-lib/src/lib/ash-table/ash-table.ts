@@ -44,7 +44,7 @@ import { CellTemplateDirective } from './directives/cell-template.directive';
     CellTemplateDirective
   ],
   templateUrl: './ash-table.html',
-  styleUrl: './ash-table.css',
+  styleUrl: './ash-table.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.ash-table-loading]': 'loading()',
