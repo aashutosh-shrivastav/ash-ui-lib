@@ -33,3 +33,6 @@ The reusable enterprise-grade table component, named `AshTable`, builds on Angul
 **Inputs/Outputs**: `@Input() selectionMode: 'none'|'single'|'multi'`, `@Output() rowSelect: EventEmitter`, `@Output() action: EventEmitter`.
 
 ***
+# Enhancement Plan: Customizable Table States
+
+- Add @ContentChild('loadingTemplate'), @ContentChild('errorTemplate'), and @ContentChild('emptyStateTemplate') to the component.
