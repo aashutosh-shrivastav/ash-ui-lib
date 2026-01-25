@@ -1,0 +1,184 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.ash-table-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  flex: 1;
+}
+
+table {
+  width: 100%;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 16px;
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Error State */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 12px;
+  text-align: center;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #f44336;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 12px;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: rgba(0, 0, 0, 0.38);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Table Styles */
+th.mat-mdc-header-cell {
+  font-weight: 600;
+  background-color: var(--ash-table-header-bg, #fafafa);
+  color: var(--ash-table-header-color, rgba(0, 0, 0, 0.87));
+}
+
+tr.mat-mdc-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--ash-table-row-hover-bg, rgba(0, 0, 0, 0.04));
+  }
+
+  &.selected {
+    background-color: var(--ash-table-row-selected-bg, #e3f2fd);
+  }
+}
+
+/* Checkbox Column */
+.mat-column-select {
+  width: 48px;
+  padding-left: 16px;
+  padding-right: 8px;
+}
+
+/* Paginator */
+mat-paginator {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Host State Classes */
+:host(.ash-table-loading) {
+  .table-wrapper,
+  mat-paginator {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+:host(.ash-table-error) {
+  .table-wrapper,
+  mat-paginator {
+    display: none;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-wrapper {
+    font-size: 14px;
+  }
+
+  th.mat-mdc-header-cell,
+  td.mat-mdc-cell {
+    padding: 8px;
+  }
+}
+
+/* Accessibility */
+.mat-mdc-row:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: -2px;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  th.mat-mdc-header-cell {
+    background-color: var(--ash-table-header-bg, #303030);
+    color: var(--ash-table-header-color, rgba(255, 255, 255, 0.87));
+  }
+
+  tr.mat-mdc-row:hover {
+    background-color: var(--ash-table-row-hover-bg, rgba(255, 255, 255, 0.08));
+  }
+
+  tr.mat-mdc-row.selected {
+    background-color: var(--ash-table-row-selected-bg, #1565c0);
+  }
+
+  .loading-state p,
+  .empty-state p,
+  .error-state p {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .empty-state mat-icon {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
