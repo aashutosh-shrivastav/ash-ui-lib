@@ -1,1 +1,110 @@
-<p>ash-table works!</p>
+<div class="ash-table-container">
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading data...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <h3>Error</h3>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  } @else if (displayedData().length === 0) {
+    <div class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <h3>No data available</h3>
+      <p>There are no records to display</p>
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table 
+        mat-table 
+        [dataSource]="displayedData()" 
+        matSort
+        (matSortChange)="handleSortChange($event)"
+        [attr.aria-label]="config().tableCaption || 'Data table'"
+        [attr.aria-rowcount]="totalRows()"
+        [attr.aria-colcount]="displayedColumnKeys().length">
+        
+        <!-- Selection Column -->
+        @if (selectionMode() !== 'none') {
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              @if (selectionMode() === 'multi') {
+                <mat-checkbox
+                  [checked]="isAllSelected()"
+                  [indeterminate]="selectedRows().size > 0 && !isAllSelected()"
+                  (change)="toggleSelectAll()"
+                  aria-label="Select all rows">
+                </mat-checkbox>
+              }
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox
+                [checked]="isRowSelected(row)"
+                (change)="toggleRowSelection(row)"
+                [aria-label]="'Select row'">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+        }
+
+        <!-- Data Columns -->
+        @for (column of visibleColumns(); track column.key) {
+          <ng-container [matColumnDef]="column.key">
+            <th 
+              mat-header-cell 
+              *matHeaderCellDef 
+              [mat-sort-header]="column.sortable ? column.key : ''"
+              [disabled]="!column.sortable"
+              [style.width]="column.width || 'auto'">
+              {{ column.label }}
+            </th>
+            <td 
+              mat-cell 
+              *matCellDef="let row; let i = index"
+              [class]="column.cssClass || ''">
+              @if (column.cellTemplate) {
+                <ng-container 
+                  [ngTemplateOutlet]="column.cellTemplate"
+                  [ngTemplateOutletContext]="{ 
+                    $implicit: row, 
+                    row: row, 
+                    column: column, 
+                    rowIndex: i,
+                    value: row[column.key]
+                  }">
+                </ng-container>
+              } @else if (column.format) {
+                {{ column.format(row[column.key]) }}
+              } @else {
+                {{ row[column.key] }}
+              }
+            </td>
+          </ng-container>
+        }
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnKeys(); sticky: config().stickyHeader"></tr>
+        <tr 
+          mat-row 
+          *matRowDef="let row; columns: displayedColumnKeys(); let i = index"
+          [class.selected]="isRowSelected(row)"
+          [attr.aria-rowindex]="i + 1">
+        </tr>
+      </table>
+    </div>
+
+    @if (pagination()) {
+      <mat-paginator
+        [length]="totalRows()"
+        [pageSize]="config().pageSize || 25"
+        [pageSizeOptions]="config().pageSizeOptions || [10, 25, 50, 100]"
+        [pageIndex]="serverSide() ? currentPage() : internalPage()"
+        [showFirstLastButtons]="config().showFirstLastButtons !== false"
+        (page)="handlePageChange($event)"
+        aria-label="Select page">
+      </mat-paginator>
+    }
+  }
+</div>
