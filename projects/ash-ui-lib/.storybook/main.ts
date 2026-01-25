@@ -10,6 +10,7 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
     "@storybook/addon-onboarding"
   ],
-  "framework": "@storybook/angular"
+  "framework": "@storybook/angular",
+  "staticDirs": ["../../../node_modules/@angular/material/prebuilt-themes"]
 };
 export default config;
