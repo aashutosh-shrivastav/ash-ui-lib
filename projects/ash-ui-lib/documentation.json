@@ -3,12 +3,12 @@
     "interfaces": [
         {
             "name": "Customer",
-            "id": "interface-Customer-dec2167bda65e470ed3d3a4b43c5c06874fed2569bbbf15f9afd1b72ff83266079fc3237e1b2d250209f5d9a71966fd808977ce56e6c9b655dcc413533bc2b8e",
+            "id": "interface-Customer-dff49b405be18bbc6be4e26c8b069c5a9c818c848a2f5d6882ba571530b615c7669ceea8b552262e7eed74ce5848f7f6cdde4fdd70c55c0538f4c7949f2ff4fe",
             "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import { Meta, StoryObj } from '@storybook/angular';\r\nimport { AshTable } from './ash-table';\r\nimport { ColumnDef } from './models/column-def.model';\r\n\r\ninterface Customer {\r\n  id: number;\r\n  name: string;\r\n  email: string;\r\n  revenue: number;\r\n  status: 'active' | 'inactive' | 'pending';\r\n  joinDate: Date;\r\n}\r\n\r\nconst generateCustomers = (count: number): Customer[] => {\r\n  const statuses: Array<'active' | 'inactive' | 'pending'> = ['active', 'inactive', 'pending'];\r\n  return Array.from({ length: count }, (_, i) => ({\r\n    id: i + 1,\r\n    name: `Customer ${i + 1}`,\r\n    email: `customer${i + 1}@example.com`,\r\n    revenue: Math.floor(Math.random() * 100000) + 10000,\r\n    status: statuses[i % 3],\r\n    joinDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)\r\n  }));\r\n};\r\n\r\nconst mockColumns: ColumnDef<Customer>[] = [\r\n  { key: 'id', label: 'ID', type: 'number', sortable: true, width: '80px' },\r\n  { key: 'name', label: 'Customer Name', sortable: true, filterable: true },\r\n  { key: 'email', label: 'Email Address', filterable: true },\r\n  { \r\n    key: 'revenue', \r\n    label: 'Revenue', \r\n    type: 'currency', \r\n    sortable: true,\r\n    format: (value: number) => `$${value.toLocaleString()}`\r\n  },\r\n  { key: 'status', label: 'Status', sortable: true },\r\n  { \r\n    key: 'joinDate', \r\n    label: 'Join Date', \r\n    type: 'date',\r\n    format: (value: Date) => value.toLocaleDateString()\r\n  }\r\n];\r\n\r\nconst meta: Meta<AshTable> = {\r\n  title: 'Enterprise/AshTable',\r\n  component: AshTable,\r\n  tags: ['autodocs'],\r\n  argTypes: {\r\n    loading: {\r\n      control: 'boolean',\r\n      description: 'Show loading spinner'\r\n    },\r\n    error: {\r\n      control: 'boolean',\r\n      description: 'Show error state'\r\n    },\r\n    pagination: {\r\n      control: 'boolean',\r\n      description: 'Enable pagination'\r\n    },\r\n    selectionMode: {\r\n      control: 'select',\r\n      options: ['none', 'single', 'multi'],\r\n      description: 'Row selection behavior'\r\n    },\r\n    serverSide: {\r\n      control: 'boolean',\r\n      description: 'Enable server-side mode'\r\n    }\r\n  }\r\n};\r\n\r\nexport default meta;\r\ntype Story = StoryObj<AshTable>;\r\n\r\n/**\r\n * Default - Basic table with 25 rows\r\n */\r\nexport const Default: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'none'\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Basic table with 25 customer records, pagination enabled, and sortable columns.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Empty state - No data available\r\n */\r\nexport const Empty: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: [],\r\n    pagination: true\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Displays an empty state with icon and message when no data is available.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Loading state - Async data loading\r\n */\r\nexport const Loading: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: [],\r\n    loading: true,\r\n    pagination: true\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Shows a loading spinner while data is being fetched.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Error state - Failed to load data\r\n */\r\nexport const Error: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: [],\r\n    error: true,\r\n    errorMessage: 'Failed to fetch customer data. Please try again.',\r\n    pagination: true\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Displays an error message when data loading fails.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * With Selection - Single row selection\r\n */\r\nexport const SingleSelection: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'single'\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with single row selection enabled. Click on a checkbox to select a row.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * With Multi Selection - Multiple row selection\r\n */\r\nexport const MultiSelection: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'multi'\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with multiple row selection. Use the header checkbox to select/deselect all visible rows.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Large Dataset - 1000 rows for performance testing\r\n */\r\nexport const LargeDataset: Story = {\r\n  name: '1,000 Rows',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(1000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 50,\r\n      pageSizeOptions: [25, 50, 100, 200]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with 1,000 rows to test pagination and performance. Uses 50 rows per page.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Without Pagination\r\n */\r\nexport const NoPagination: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(15),\r\n    pagination: false\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with pagination disabled, showing all rows at once.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Custom Page Sizes\r\n */\r\nexport const CustomPageSizes: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(100),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 15,\r\n      pageSizeOptions: [5, 15, 30, 50],\r\n      showFirstLastButtons: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with custom page sizes and first/last page navigation buttons.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Sticky Header\r\n */\r\nexport const StickyHeader: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(50),\r\n    pagination: false,\r\n    config: {\r\n      stickyHeader: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with sticky header that remains visible while scrolling.'\r\n      }\r\n    }\r\n  },\r\n  decorators: [\r\n    (Story) => ({\r\n      template: `\r\n        <div style=\"max-height: 400px; overflow: auto;\">\r\n          <Story />\r\n        </div>\r\n      `\r\n    })\r\n  ]\r\n};\r\n\r\n/**\r\n * Performance Test - 5,000 Rows\r\n */\r\nexport const Performance5K: Story = {\r\n  name: '5,000 Rows (Performance)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(5000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 100,\r\n      pageSizeOptions: [50, 100, 200, 500]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Stress test with 5,000 rows. Tests pagination performance and rendering speed.'\r\n      }\r\n    }\r\n  }\r\n};\r\n",
+            "sourceCode": "import { Meta, StoryObj, applicationConfig } from '@storybook/angular';\r\nimport { AshTable } from './ash-table';\r\nimport { ColumnDef } from './models/column-def.model';\r\nimport { provideAnimations } from '@angular/platform-browser/animations';\r\n\r\ninterface Customer {\r\n  id: number;\r\n  name: string;\r\n  email: string;\r\n  revenue: number;\r\n  status: 'active' | 'inactive' | 'pending';\r\n  joinDate: Date;\r\n}\r\n\r\nconst generateCustomers = (count: number): Customer[] => {\r\n  const statuses: Array<'active' | 'inactive' | 'pending'> = ['active', 'inactive', 'pending'];\r\n  const names = ['Acme Corp', 'TechStart Inc', 'Global Solutions', 'Innovation Labs', 'Digital Ventures'];\r\n  return Array.from({ length: count }, (_, i) => ({\r\n    id: i + 1,\r\n    name: `${names[i % names.length]} ${Math.floor(i / names.length) + 1}`,\r\n    email: `contact${i + 1}@example.com`,\r\n    revenue: Math.floor(Math.random() * 500000) + 50000,\r\n    status: statuses[i % 3],\r\n    joinDate: new Date(2023 + Math.floor(i / 100), (i * 3) % 12, (i * 7) % 28 + 1)\r\n  }));\r\n};\r\n\r\nconst mockColumns: ColumnDef<Customer>[] = [\r\n  { key: 'id', label: 'ID', type: 'number', sortable: true, width: '80px' },\r\n  { key: 'name', label: 'Customer Name', sortable: true, filterable: true },\r\n  { key: 'email', label: 'Email Address', filterable: true },\r\n  { \r\n    key: 'revenue', \r\n    label: 'Revenue', \r\n    type: 'currency', \r\n    sortable: true,\r\n    filterable: true,\r\n    format: (value: number) => `$${value.toLocaleString()}`\r\n  },\r\n  { key: 'status', label: 'Status', sortable: true, filterable: true },\r\n  { \r\n    key: 'joinDate', \r\n    label: 'Join Date', \r\n    type: 'date',\r\n    sortable: true,\r\n    format: (value: Date) => value.toLocaleDateString()\r\n  }\r\n];\r\n\r\nconst meta: Meta<AshTable> = {\r\n  title: 'Enterprise/AshTable',\r\n  component: AshTable,\r\n  tags: ['autodocs'],\r\n  decorators: [\r\n    applicationConfig({\r\n      providers: [provideAnimations()],\r\n    }),\r\n  ],\r\n  argTypes: {\r\n    loading: {\r\n      control: 'boolean',\r\n      description: 'Show loading spinner'\r\n    },\r\n    error: {\r\n      control: 'boolean',\r\n      description: 'Show error state'\r\n    },\r\n    pagination: {\r\n      control: 'boolean',\r\n      description: 'Enable pagination'\r\n    },\r\n    selectionMode: {\r\n      control: 'select',\r\n      options: ['none', 'single', 'multi'],\r\n      description: 'Row selection behavior'\r\n    },\r\n    serverSide: {\r\n      control: 'boolean',\r\n      description: 'Enable server-side mode'\r\n    }\r\n  }\r\n};\r\n\r\nexport default meta;\r\ntype Story = StoryObj<AshTable>;\r\n\r\n/**\r\n * Default - Basic table with 50 rows\r\n */\r\nexport const Default: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(50),\r\n    pagination: true,\r\n    selectionMode: 'none',\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100],\r\n      stickyHeader: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Basic table with 50 customer records, pagination enabled, sortable and filterable columns. Try clicking column headers to sort, and the filter icon to filter data.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Empty state - No data available\r\n */\r\nexport const Empty: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: [],\r\n    pagination: true\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Displays an empty state with icon and message when no data is available.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Loading state - Async data loading\r\n */\r\nexport const Loading: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: [],\r\n    loading: true,\r\n    pagination: true\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Shows a loading spinner while data is being fetched.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Error state - Failed to load data\r\n */\r\nexport const ErrorState: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: [],\r\n    error: true,\r\n    errorMessage: 'Failed to fetch customer data. Please try again.',\r\n    pagination: true\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Displays an error message when data loading fails.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * With Selection - Single row selection\r\n */\r\nexport const SingleSelection: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'single'\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with single row selection enabled. Click on a checkbox to select a row.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * With Multi Selection - Multiple row selection\r\n */\r\nexport const MultiSelection: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'multi'\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with multiple row selection. Use the header checkbox to select/deselect all visible rows.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Large Dataset - 1000 rows for performance testing\r\n */\r\nexport const LargeDataset: Story = {\r\n  name: '1,000 Rows',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(1000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 50,\r\n      pageSizeOptions: [25, 50, 100, 200]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with 1,000 rows to test pagination and performance. Uses 50 rows per page.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Without Pagination\r\n */\r\nexport const NoPagination: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(15),\r\n    pagination: false\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with pagination disabled, showing all rows at once.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Custom Page Sizes\r\n */\r\nexport const CustomPageSizes: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(100),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 15,\r\n      pageSizeOptions: [5, 15, 30, 50],\r\n      showFirstLastButtons: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with custom page sizes and first/last page navigation buttons.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Sticky Header\r\n */\r\nexport const StickyHeader: Story = {\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(50),\r\n    pagination: false,\r\n    config: {\r\n      stickyHeader: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with sticky header that remains visible while scrolling.'\r\n      }\r\n    }\r\n  },\r\n  decorators: [\r\n    (Story) => ({\r\n      template: `\r\n        <div style=\"max-height: 400px; overflow: auto;\">\r\n          <Story />\r\n        </div>\r\n      `\r\n    })\r\n  ]\r\n};\r\n\r\n/**\r\n * Performance Test - 5,000 Rows\r\n */\r\nexport const Performance5K: Story = {\r\n  name: '5,000 Rows (Performance)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(5000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 100,\r\n      pageSizeOptions: [50, 100, 200, 500]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Performance test with 5,000 rows. Uses pagination with 100 rows per page.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Virtual Scrolling - 10,000 Rows\r\n */\r\nexport const VirtualScrolling: Story = {\r\n  name: 'Virtual Scroll (10K Rows)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(10000),\r\n    pagination: false,\r\n    config: {\r\n      virtualScroll: true,\r\n      itemSize: 48,\r\n      minBufferPx: 480,\r\n      maxBufferPx: 960\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with virtual scrolling enabled for 10,000 rows. Only renders visible rows for optimal performance. Scroll to see smooth rendering without lag.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Column Filtering\r\n */\r\nexport const WithFiltering: Story = {\r\n  name: 'Column Filtering',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(100),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with column filtering enabled. Click the filter icon in column headers to filter data. Supports contains-based text filtering.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * Keyboard Navigation\r\n */\r\nexport const KeyboardNavigation: Story = {\r\n  name: 'Keyboard Navigation',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'multi',\r\n    config: {\r\n      pageSize: 10\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with full keyboard navigation support. Use Arrow Up/Down to navigate, Space to select, Enter to activate, Home/End for first/last row. Click on a row first to start keyboard navigation.'\r\n      }\r\n    }\r\n  }\r\n};\r\n\r\n/**\r\n * All Features Combined\r\n */\r\nexport const AllFeatures: Story = {\r\n  name: 'All Features',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(200),\r\n    pagination: true,\r\n    selectionMode: 'multi',\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100],\r\n      stickyHeader: true,\r\n      showFirstLastButtons: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Complete demonstration with all features: sorting, filtering, pagination, multi-selection, keyboard navigation, and sticky header. Try all the interactions!'\r\n      }\r\n    }\r\n  }\r\n};\r\n",
             "properties": [
                 {
                     "name": "email",
@@ -18,7 +18,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 8
+                    "line": 9
                 },
                 {
                     "name": "id",
@@ -28,7 +28,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 6
+                    "line": 7
                 },
                 {
                     "name": "joinDate",
@@ -38,7 +38,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 11
+                    "line": 12
                 },
                 {
                     "name": "name",
@@ -48,7 +48,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 7
+                    "line": 8
                 },
                 {
                     "name": "revenue",
@@ -58,7 +58,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 9
+                    "line": 10
                 },
                 {
                     "name": "status",
@@ -68,7 +68,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 10
+                    "line": 11
                 }
             ],
             "indexSignatures": [],
@@ -86,6 +86,18 @@
     "modules": [],
     "miscellaneous": {
         "variables": [
+            {
+                "name": "AllFeatures",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\r\n  name: 'All Features',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(200),\r\n    pagination: true,\r\n    selectionMode: 'multi',\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100],\r\n      stickyHeader: true,\r\n      showFirstLastButtons: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Complete demonstration with all features: sorting, filtering, pagination, multi-selection, keyboard navigation, and sticky header. Try all the interactions!'\r\n      }\r\n    }\r\n  }\r\n}",
+                "rawdescription": "All Features Combined",
+                "description": "<p>All Features Combined</p>\n"
+            },
             {
                 "name": "CustomPageSizes",
                 "ctype": "miscellaneous",
@@ -106,9 +118,9 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Story",
-                "defaultValue": "{\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'none'\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Basic table with 25 customer records, pagination enabled, and sortable columns.'\r\n      }\r\n    }\r\n  }\r\n}",
-                "rawdescription": "Default - Basic table with 25 rows",
-                "description": "<p>Default - Basic table with 25 rows</p>\n"
+                "defaultValue": "{\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(50),\r\n    pagination: true,\r\n    selectionMode: 'none',\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100],\r\n      stickyHeader: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Basic table with 50 customer records, pagination enabled, sortable and filterable columns. Try clicking column headers to sort, and the filter icon to filter data.'\r\n      }\r\n    }\r\n  }\r\n}",
+                "rawdescription": "Default - Basic table with 50 rows",
+                "description": "<p>Default - Basic table with 50 rows</p>\n"
             },
             {
                 "name": "Empty",
@@ -123,7 +135,7 @@
                 "description": "<p>Empty state - No data available</p>\n"
             },
             {
-                "name": "Error",
+                "name": "ErrorState",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
                 "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
@@ -142,7 +154,19 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "unknown",
-                "defaultValue": "(count: number): Customer[] => {\r\n  const statuses: Array<'active' | 'inactive' | 'pending'> = ['active', 'inactive', 'pending'];\r\n  return Array.from({ length: count }, (_, i) => ({\r\n    id: i + 1,\r\n    name: `Customer ${i + 1}`,\r\n    email: `customer${i + 1}@example.com`,\r\n    revenue: Math.floor(Math.random() * 100000) + 10000,\r\n    status: statuses[i % 3],\r\n    joinDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)\r\n  }));\r\n}"
+                "defaultValue": "(count: number): Customer[] => {\r\n  const statuses: Array<'active' | 'inactive' | 'pending'> = ['active', 'inactive', 'pending'];\r\n  const names = ['Acme Corp', 'TechStart Inc', 'Global Solutions', 'Innovation Labs', 'Digital Ventures'];\r\n  return Array.from({ length: count }, (_, i) => ({\r\n    id: i + 1,\r\n    name: `${names[i % names.length]} ${Math.floor(i / names.length) + 1}`,\r\n    email: `contact${i + 1}@example.com`,\r\n    revenue: Math.floor(Math.random() * 500000) + 50000,\r\n    status: statuses[i % 3],\r\n    joinDate: new Date(2023 + Math.floor(i / 100), (i * 3) % 12, (i * 7) % 28 + 1)\r\n  }));\r\n}"
+            },
+            {
+                "name": "KeyboardNavigation",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\r\n  name: 'Keyboard Navigation',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'multi',\r\n    config: {\r\n      pageSize: 10\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with full keyboard navigation support. Use Arrow Up/Down to navigate, Space to select, Enter to activate, Home/End for first/last row. Click on a row first to start keyboard navigation.'\r\n      }\r\n    }\r\n  }\r\n}",
+                "rawdescription": "Keyboard Navigation",
+                "description": "<p>Keyboard Navigation</p>\n"
             },
             {
                 "name": "LargeDataset",
@@ -176,7 +200,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Meta<AshTable>",
-                "defaultValue": "{\r\n  title: 'Enterprise/AshTable',\r\n  component: AshTable,\r\n  tags: ['autodocs'],\r\n  argTypes: {\r\n    loading: {\r\n      control: 'boolean',\r\n      description: 'Show loading spinner'\r\n    },\r\n    error: {\r\n      control: 'boolean',\r\n      description: 'Show error state'\r\n    },\r\n    pagination: {\r\n      control: 'boolean',\r\n      description: 'Enable pagination'\r\n    },\r\n    selectionMode: {\r\n      control: 'select',\r\n      options: ['none', 'single', 'multi'],\r\n      description: 'Row selection behavior'\r\n    },\r\n    serverSide: {\r\n      control: 'boolean',\r\n      description: 'Enable server-side mode'\r\n    }\r\n  }\r\n}"
+                "defaultValue": "{\r\n  title: 'Enterprise/AshTable',\r\n  component: AshTable,\r\n  tags: ['autodocs'],\r\n  decorators: [\r\n    applicationConfig({\r\n      providers: [provideAnimations()],\r\n    }),\r\n  ],\r\n  argTypes: {\r\n    loading: {\r\n      control: 'boolean',\r\n      description: 'Show loading spinner'\r\n    },\r\n    error: {\r\n      control: 'boolean',\r\n      description: 'Show error state'\r\n    },\r\n    pagination: {\r\n      control: 'boolean',\r\n      description: 'Enable pagination'\r\n    },\r\n    selectionMode: {\r\n      control: 'select',\r\n      options: ['none', 'single', 'multi'],\r\n      description: 'Row selection behavior'\r\n    },\r\n    serverSide: {\r\n      control: 'boolean',\r\n      description: 'Enable server-side mode'\r\n    }\r\n  }\r\n}"
             },
             {
                 "name": "mockColumns",
@@ -186,7 +210,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "ColumnDef[]",
-                "defaultValue": "[\r\n  { key: 'id', label: 'ID', type: 'number', sortable: true, width: '80px' },\r\n  { key: 'name', label: 'Customer Name', sortable: true, filterable: true },\r\n  { key: 'email', label: 'Email Address', filterable: true },\r\n  { \r\n    key: 'revenue', \r\n    label: 'Revenue', \r\n    type: 'currency', \r\n    sortable: true,\r\n    format: (value: number) => `$${value.toLocaleString()}`\r\n  },\r\n  { key: 'status', label: 'Status', sortable: true },\r\n  { \r\n    key: 'joinDate', \r\n    label: 'Join Date', \r\n    type: 'date',\r\n    format: (value: Date) => value.toLocaleDateString()\r\n  }\r\n]"
+                "defaultValue": "[\r\n  { key: 'id', label: 'ID', type: 'number', sortable: true, width: '80px' },\r\n  { key: 'name', label: 'Customer Name', sortable: true, filterable: true },\r\n  { key: 'email', label: 'Email Address', filterable: true },\r\n  { \r\n    key: 'revenue', \r\n    label: 'Revenue', \r\n    type: 'currency', \r\n    sortable: true,\r\n    filterable: true,\r\n    format: (value: number) => `$${value.toLocaleString()}`\r\n  },\r\n  { key: 'status', label: 'Status', sortable: true, filterable: true },\r\n  { \r\n    key: 'joinDate', \r\n    label: 'Join Date', \r\n    type: 'date',\r\n    sortable: true,\r\n    format: (value: Date) => value.toLocaleDateString()\r\n  }\r\n]"
             },
             {
                 "name": "MultiSelection",
@@ -220,7 +244,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Story",
-                "defaultValue": "{\r\n  name: '5,000 Rows (Performance)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(5000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 100,\r\n      pageSizeOptions: [50, 100, 200, 500]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Stress test with 5,000 rows. Tests pagination performance and rendering speed.'\r\n      }\r\n    }\r\n  }\r\n}",
+                "defaultValue": "{\r\n  name: '5,000 Rows (Performance)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(5000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 100,\r\n      pageSizeOptions: [50, 100, 200, 500]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Performance test with 5,000 rows. Uses pagination with 100 rows per page.'\r\n      }\r\n    }\r\n  }\r\n}",
                 "rawdescription": "Performance Test - 5,000 Rows",
                 "description": "<p>Performance Test - 5,000 Rows</p>\n"
             },
@@ -257,6 +281,30 @@
                 "defaultValue": "{\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(50),\r\n    pagination: false,\r\n    config: {\r\n      stickyHeader: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with sticky header that remains visible while scrolling.'\r\n      }\r\n    }\r\n  },\r\n  decorators: [\r\n    (Story) => ({\r\n      template: `\r\n        <div style=\"max-height: 400px; overflow: auto;\">\r\n          <Story />\r\n        </div>\r\n      `\r\n    })\r\n  ]\r\n}",
                 "rawdescription": "Sticky Header",
                 "description": "<p>Sticky Header</p>\n"
+            },
+            {
+                "name": "VirtualScrolling",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\r\n  name: 'Virtual Scroll (10K Rows)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(10000),\r\n    pagination: false,\r\n    config: {\r\n      virtualScroll: true,\r\n      itemSize: 48,\r\n      minBufferPx: 480,\r\n      maxBufferPx: 960\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with virtual scrolling enabled for 10,000 rows. Only renders visible rows for optimal performance. Scroll to see smooth rendering without lag.'\r\n      }\r\n    }\r\n  }\r\n}",
+                "rawdescription": "Virtual Scrolling - 10,000 Rows",
+                "description": "<p>Virtual Scrolling - 10,000 Rows</p>\n"
+            },
+            {
+                "name": "WithFiltering",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\r\n  name: 'Column Filtering',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(100),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with column filtering enabled. Click the filter icon in column headers to filter data. Supports contains-based text filtering.'\r\n      }\r\n    }\r\n  }\r\n}",
+                "rawdescription": "Column Filtering",
+                "description": "<p>Column Filtering</p>\n"
             }
         ],
         "functions": [],
@@ -277,6 +325,18 @@
         "groupedVariables": {
             "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts": [
                 {
+                    "name": "AllFeatures",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\r\n  name: 'All Features',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(200),\r\n    pagination: true,\r\n    selectionMode: 'multi',\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100],\r\n      stickyHeader: true,\r\n      showFirstLastButtons: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Complete demonstration with all features: sorting, filtering, pagination, multi-selection, keyboard navigation, and sticky header. Try all the interactions!'\r\n      }\r\n    }\r\n  }\r\n}",
+                    "rawdescription": "All Features Combined",
+                    "description": "<p>All Features Combined</p>\n"
+                },
+                {
                     "name": "CustomPageSizes",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
@@ -296,9 +356,9 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "Story",
-                    "defaultValue": "{\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'none'\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Basic table with 25 customer records, pagination enabled, and sortable columns.'\r\n      }\r\n    }\r\n  }\r\n}",
-                    "rawdescription": "Default - Basic table with 25 rows",
-                    "description": "<p>Default - Basic table with 25 rows</p>\n"
+                    "defaultValue": "{\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(50),\r\n    pagination: true,\r\n    selectionMode: 'none',\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100],\r\n      stickyHeader: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Basic table with 50 customer records, pagination enabled, sortable and filterable columns. Try clicking column headers to sort, and the filter icon to filter data.'\r\n      }\r\n    }\r\n  }\r\n}",
+                    "rawdescription": "Default - Basic table with 50 rows",
+                    "description": "<p>Default - Basic table with 50 rows</p>\n"
                 },
                 {
                     "name": "Empty",
@@ -313,7 +373,7 @@
                     "description": "<p>Empty state - No data available</p>\n"
                 },
                 {
-                    "name": "Error",
+                    "name": "ErrorState",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
                     "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
@@ -332,7 +392,19 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "unknown",
-                    "defaultValue": "(count: number): Customer[] => {\r\n  const statuses: Array<'active' | 'inactive' | 'pending'> = ['active', 'inactive', 'pending'];\r\n  return Array.from({ length: count }, (_, i) => ({\r\n    id: i + 1,\r\n    name: `Customer ${i + 1}`,\r\n    email: `customer${i + 1}@example.com`,\r\n    revenue: Math.floor(Math.random() * 100000) + 10000,\r\n    status: statuses[i % 3],\r\n    joinDate: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)\r\n  }));\r\n}"
+                    "defaultValue": "(count: number): Customer[] => {\r\n  const statuses: Array<'active' | 'inactive' | 'pending'> = ['active', 'inactive', 'pending'];\r\n  const names = ['Acme Corp', 'TechStart Inc', 'Global Solutions', 'Innovation Labs', 'Digital Ventures'];\r\n  return Array.from({ length: count }, (_, i) => ({\r\n    id: i + 1,\r\n    name: `${names[i % names.length]} ${Math.floor(i / names.length) + 1}`,\r\n    email: `contact${i + 1}@example.com`,\r\n    revenue: Math.floor(Math.random() * 500000) + 50000,\r\n    status: statuses[i % 3],\r\n    joinDate: new Date(2023 + Math.floor(i / 100), (i * 3) % 12, (i * 7) % 28 + 1)\r\n  }));\r\n}"
+                },
+                {
+                    "name": "KeyboardNavigation",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\r\n  name: 'Keyboard Navigation',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(25),\r\n    pagination: true,\r\n    selectionMode: 'multi',\r\n    config: {\r\n      pageSize: 10\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with full keyboard navigation support. Use Arrow Up/Down to navigate, Space to select, Enter to activate, Home/End for first/last row. Click on a row first to start keyboard navigation.'\r\n      }\r\n    }\r\n  }\r\n}",
+                    "rawdescription": "Keyboard Navigation",
+                    "description": "<p>Keyboard Navigation</p>\n"
                 },
                 {
                     "name": "LargeDataset",
@@ -366,7 +438,7 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "Meta<AshTable>",
-                    "defaultValue": "{\r\n  title: 'Enterprise/AshTable',\r\n  component: AshTable,\r\n  tags: ['autodocs'],\r\n  argTypes: {\r\n    loading: {\r\n      control: 'boolean',\r\n      description: 'Show loading spinner'\r\n    },\r\n    error: {\r\n      control: 'boolean',\r\n      description: 'Show error state'\r\n    },\r\n    pagination: {\r\n      control: 'boolean',\r\n      description: 'Enable pagination'\r\n    },\r\n    selectionMode: {\r\n      control: 'select',\r\n      options: ['none', 'single', 'multi'],\r\n      description: 'Row selection behavior'\r\n    },\r\n    serverSide: {\r\n      control: 'boolean',\r\n      description: 'Enable server-side mode'\r\n    }\r\n  }\r\n}"
+                    "defaultValue": "{\r\n  title: 'Enterprise/AshTable',\r\n  component: AshTable,\r\n  tags: ['autodocs'],\r\n  decorators: [\r\n    applicationConfig({\r\n      providers: [provideAnimations()],\r\n    }),\r\n  ],\r\n  argTypes: {\r\n    loading: {\r\n      control: 'boolean',\r\n      description: 'Show loading spinner'\r\n    },\r\n    error: {\r\n      control: 'boolean',\r\n      description: 'Show error state'\r\n    },\r\n    pagination: {\r\n      control: 'boolean',\r\n      description: 'Enable pagination'\r\n    },\r\n    selectionMode: {\r\n      control: 'select',\r\n      options: ['none', 'single', 'multi'],\r\n      description: 'Row selection behavior'\r\n    },\r\n    serverSide: {\r\n      control: 'boolean',\r\n      description: 'Enable server-side mode'\r\n    }\r\n  }\r\n}"
                 },
                 {
                     "name": "mockColumns",
@@ -376,7 +448,7 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "ColumnDef[]",
-                    "defaultValue": "[\r\n  { key: 'id', label: 'ID', type: 'number', sortable: true, width: '80px' },\r\n  { key: 'name', label: 'Customer Name', sortable: true, filterable: true },\r\n  { key: 'email', label: 'Email Address', filterable: true },\r\n  { \r\n    key: 'revenue', \r\n    label: 'Revenue', \r\n    type: 'currency', \r\n    sortable: true,\r\n    format: (value: number) => `$${value.toLocaleString()}`\r\n  },\r\n  { key: 'status', label: 'Status', sortable: true },\r\n  { \r\n    key: 'joinDate', \r\n    label: 'Join Date', \r\n    type: 'date',\r\n    format: (value: Date) => value.toLocaleDateString()\r\n  }\r\n]"
+                    "defaultValue": "[\r\n  { key: 'id', label: 'ID', type: 'number', sortable: true, width: '80px' },\r\n  { key: 'name', label: 'Customer Name', sortable: true, filterable: true },\r\n  { key: 'email', label: 'Email Address', filterable: true },\r\n  { \r\n    key: 'revenue', \r\n    label: 'Revenue', \r\n    type: 'currency', \r\n    sortable: true,\r\n    filterable: true,\r\n    format: (value: number) => `$${value.toLocaleString()}`\r\n  },\r\n  { key: 'status', label: 'Status', sortable: true, filterable: true },\r\n  { \r\n    key: 'joinDate', \r\n    label: 'Join Date', \r\n    type: 'date',\r\n    sortable: true,\r\n    format: (value: Date) => value.toLocaleDateString()\r\n  }\r\n]"
                 },
                 {
                     "name": "MultiSelection",
@@ -410,7 +482,7 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "Story",
-                    "defaultValue": "{\r\n  name: '5,000 Rows (Performance)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(5000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 100,\r\n      pageSizeOptions: [50, 100, 200, 500]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Stress test with 5,000 rows. Tests pagination performance and rendering speed.'\r\n      }\r\n    }\r\n  }\r\n}",
+                    "defaultValue": "{\r\n  name: '5,000 Rows (Performance)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(5000),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 100,\r\n      pageSizeOptions: [50, 100, 200, 500]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Performance test with 5,000 rows. Uses pagination with 100 rows per page.'\r\n      }\r\n    }\r\n  }\r\n}",
                     "rawdescription": "Performance Test - 5,000 Rows",
                     "description": "<p>Performance Test - 5,000 Rows</p>\n"
                 },
@@ -437,6 +509,30 @@
                     "defaultValue": "{\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(50),\r\n    pagination: false,\r\n    config: {\r\n      stickyHeader: true\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with sticky header that remains visible while scrolling.'\r\n      }\r\n    }\r\n  },\r\n  decorators: [\r\n    (Story) => ({\r\n      template: `\r\n        <div style=\"max-height: 400px; overflow: auto;\">\r\n          <Story />\r\n        </div>\r\n      `\r\n    })\r\n  ]\r\n}",
                     "rawdescription": "Sticky Header",
                     "description": "<p>Sticky Header</p>\n"
+                },
+                {
+                    "name": "VirtualScrolling",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\r\n  name: 'Virtual Scroll (10K Rows)',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(10000),\r\n    pagination: false,\r\n    config: {\r\n      virtualScroll: true,\r\n      itemSize: 48,\r\n      minBufferPx: 480,\r\n      maxBufferPx: 960\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with virtual scrolling enabled for 10,000 rows. Only renders visible rows for optimal performance. Scroll to see smooth rendering without lag.'\r\n      }\r\n    }\r\n  }\r\n}",
+                    "rawdescription": "Virtual Scrolling - 10,000 Rows",
+                    "description": "<p>Virtual Scrolling - 10,000 Rows</p>\n"
+                },
+                {
+                    "name": "WithFiltering",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\r\n  name: 'Column Filtering',\r\n  args: {\r\n    columns: mockColumns,\r\n    dataSource: generateCustomers(100),\r\n    pagination: true,\r\n    config: {\r\n      pageSize: 25,\r\n      pageSizeOptions: [10, 25, 50, 100]\r\n    }\r\n  },\r\n  parameters: {\r\n    docs: {\r\n      description: {\r\n        story: 'Table with column filtering enabled. Click the filter icon in column headers to filter data. Supports contains-based text filtering.'\r\n      }\r\n    }\r\n  }\r\n}",
+                    "rawdescription": "Column Filtering",
+                    "description": "<p>Column Filtering</p>\n"
                 }
             ],
             "projects/ash-ui-lib/.storybook/preview.ts": [
@@ -476,7 +572,7 @@
         "children": []
     },
     "coverage": {
-        "count": 64,
+        "count": 71,
         "status": "good",
         "files": [
             {
@@ -497,6 +593,16 @@
                 "coveragePercent": 0,
                 "coverageCount": "0/7",
                 "status": "low"
+            },
+            {
+                "filePath": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "AllFeatures",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
             },
             {
                 "filePath": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
@@ -533,7 +639,7 @@
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
-                "name": "Error",
+                "name": "ErrorState",
                 "coveragePercent": 100,
                 "coverageCount": "1/1",
                 "status": "very-good"
@@ -547,6 +653,16 @@
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"
+            },
+            {
+                "filePath": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "KeyboardNavigation",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
             },
             {
                 "filePath": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
@@ -634,6 +750,26 @@
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
                 "name": "StickyHeader",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "VirtualScrolling",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/ash-ui-lib/src/lib/ash-table/ash-table.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "WithFiltering",
                 "coveragePercent": 100,
                 "coverageCount": "1/1",
                 "status": "very-good"
