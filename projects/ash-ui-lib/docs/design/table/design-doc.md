@@ -1005,35 +1005,30 @@ export const Performance10K: Story = {
 - [x] Bulk action support
 
 ### Phase 4: Advanced Features (Week 2)
-- [ ] Virtual scrolling setup *(not done)*
-- [ ] Column filtering UI *(not done)*
+- [x] Virtual scrolling setup *(completed: CDK virtual scroll with configurable buffer)*
+- [x] Column filtering UI *(completed: per-column filter with contains operator)*
 - [ ] Resizable columns directive *(not done)*
 - [x] Cell template projection *(done: via CellTemplateDirective and contentChildren)*
 - [x] Loading/error states *(done: default states in template)*
-- [ ] Customizable loading, error, and empty state templates via @ContentChild('loadingTemplate'), @ContentChild('errorTemplate'), and @ContentChild('emptyStateTemplate') *(not done)*
----
-
-## Enhancement Plan: Customizable Table States
-
-- [ ] Support customizable loading, error, and empty state templates via `@ContentChild('loadingTemplate')`, `@ContentChild('errorTemplate')`, and `@ContentChild('emptyStateTemplate')` in the component (see Phase 4 checklist).
+- [x] Customizable loading, error, and empty state templates via @ContentChild('loadingTemplate'), @ContentChild('errorTemplate'), and @ContentChild('emptyStateTemplate') *(completed)*
 
 ### Phase 5: Performance & Accessibility (Week 3)
-- [ ] Virtual scroll optimization
-- [x] OnPush verification
-- [x] ARIA attributes
-- [ ] Keyboard navigation
-- [ ] Screen reader testing
+- [x] Virtual scroll optimization *(completed: buffer configuration for optimal performance)*
+- [x] OnPush verification *(completed and verified)*
+- [x] ARIA attributes *(completed and verified)*
+- [x] Keyboard navigation *(completed: Arrow keys, Space, Enter, Home, End support)*
 
 ### Phase 6: Export & Polish (Week 3)
 - [ ] CSV export service
 - [ ] Excel export (optional)
 - [ ] PDF export (optional)
-- [ ] Theming support
-- [ ] RTL compatibility
+- [ ] Theming support *(see docs/guides/theming-guide.md)*
+- [ ] RTL compatibility *(see docs/guides/rtl-guide.md)*
 
 ### Phase 7: Documentation & Testing (Week 4)
 - [ ] Storybook stories (8 canonical)
 - [ ] Unit tests (80%+ coverage)
+- [ ] Screen reader testing *(post unit testing - requires manual validation with NVDA/JAWS)*
 - [ ] API documentation
 - [ ] Usage examples
 - [ ] Performance benchmarks
