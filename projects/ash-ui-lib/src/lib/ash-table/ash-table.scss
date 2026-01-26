@@ -14,6 +14,16 @@
   flex: 1;
 }
 
+/* Virtual Scroll Support */
+.table-viewport {
+  height: 500px;
+  width: 100%;
+}
+
+.table-wrapper.virtual-scroll-enabled {
+  overflow: visible;
+}
+
 table {
   width: 100%;
 }
@@ -96,6 +106,60 @@ th.mat-mdc-header-cell {
   font-weight: 600;
   background-color: var(--ash-table-header-bg, #fafafa);
   color: var(--ash-table-header-color, rgba(0, 0, 0, 0.87));
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.filter-button {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &.active {
+    opacity: 1;
+    color: #1976d2;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.filter-input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px 0;
+}
+
+.filter-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: #1976d2;
+  }
 }
 
 tr.mat-mdc-row {
@@ -155,6 +219,14 @@ mat-paginator {
 .mat-mdc-row:focus {
   outline: 2px solid #1976d2;
   outline-offset: -2px;
+}
+
+.mat-mdc-row.focused {
+  background-color: var(--ash-table-row-focused-bg, rgba(25, 118, 210, 0.08));
+}
+
+.mat-mdc-row {
+  outline: none;
 }
 
 /* Dark Mode Support */
