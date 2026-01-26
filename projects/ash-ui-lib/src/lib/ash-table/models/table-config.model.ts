@@ -8,6 +8,12 @@ export interface TableConfig {
   /** Row height in pixels (required for virtual scroll) */
   itemSize?: number;
   
+  /** Minimum buffer size in pixels for virtual scroll */
+  minBufferPx?: number;
+  
+  /** Maximum buffer size in pixels for virtual scroll */
+  maxBufferPx?: number;
+  
   /** Default page size */
   pageSize?: number;
   

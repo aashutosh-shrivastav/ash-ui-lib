@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  contentChild,
   contentChildren,
   inject,
   input,
   output,
-  signal
+  signal,
+  TemplateRef
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent as MatPageEvent } from '@angular/material/paginator';
@@ -15,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { ColumnDef } from './models/column-def.model';
 import { TableConfig } from './models/table-config.model';
@@ -41,7 +44,8 @@ import { CellTemplateDirective } from './directives/cell-template.directive';
     MatProgressSpinnerModule,
     MatIconModule,
     MatCheckboxModule,
-    CellTemplateDirective
+    CellTemplateDirective,
+    ScrollingModule
   ],
   templateUrl: './ash-table.html',
   styleUrl: './ash-table.scss',
@@ -87,12 +91,17 @@ export class AshTable<T = any> {
 
   // Content children for custom templates
   readonly cellTemplates = contentChildren(CellTemplateDirective);
+  readonly loadingTemplate = contentChild<TemplateRef<any>>('loadingTemplate');
+  readonly errorTemplate = contentChild<TemplateRef<any>>('errorTemplate');
+  readonly emptyStateTemplate = contentChild<TemplateRef<any>>('emptyStateTemplate');
 
   // Internal state signals
   protected readonly selectedRows = signal<Set<T>>(new Set());
   protected readonly internalPage = signal<number>(0);
   protected readonly internalSort = signal<SortDescriptor | null>(null);
   protected readonly internalFilters = signal<FilterDescriptor[]>([]);
+  protected readonly activeFilterColumn = signal<string>('');
+  protected readonly focusedRowIndex = signal<number>(-1);
 
   // Services
   private readonly dataService = inject(TableDataService);
@@ -150,6 +159,12 @@ export class AshTable<T = any> {
     const trackBy = this.config().trackBy;
     return trackBy ? trackBy(index, item) : (item as any)?.id ?? index;
   };
+
+  protected readonly virtualScrollConfig = computed(() => ({
+    itemSize: this.config().itemSize || 48,
+    minBufferPx: this.config().minBufferPx || 480,
+    maxBufferPx: this.config().maxBufferPx || 960
+  }));
 
   // Selection methods
   protected toggleRowSelection(row: T): void {
@@ -232,6 +247,114 @@ export class AshTable<T = any> {
       action: actionName,
       row,
       rowIndex
+    });
+  }
+
+  // Filter methods
+  protected toggleColumnFilter(columnKey: string): void {
+    if (this.activeFilterColumn() === columnKey) {
+      this.activeFilterColumn.set('');
+    } else {
+      this.activeFilterColumn.set(columnKey);
+    }
+  }
+
+  protected applyColumnFilter(field: string, value: string): void {
+    const filters = this.internalFilters();
+    const existingIndex = filters.findIndex(f => f.field === field);
+    
+    if (value.trim() === '') {
+      if (existingIndex !== -1) {
+        const newFilters = [...filters];
+        newFilters.splice(existingIndex, 1);
+        this.internalFilters.set(newFilters);
+      }
+    } else {
+      const newFilter: FilterDescriptor = {
+        field,
+        operator: 'contains',
+        value: value.trim()
+      };
+      
+      if (existingIndex !== -1) {
+        const newFilters = [...filters];
+        newFilters[existingIndex] = newFilter;
+        this.internalFilters.set(newFilters);
+      } else {
+        this.internalFilters.set([...filters, newFilter]);
+      }
+    }
+    
+    this.internalPage.set(0); // Reset to first page when filtering
+    this.filterChange.emit(this.internalFilters());
+  }
+
+  protected clearColumnFilter(field: string): void {
+    const filters = this.internalFilters().filter(f => f.field !== field);
+    this.internalFilters.set(filters);
+    this.activeFilterColumn.set('');
+    this.filterChange.emit(filters);
+  }
+
+  protected isColumnFiltered(columnKey: string): boolean {
+    return this.internalFilters().some(f => f.field === columnKey);
+  }
+
+  protected getColumnFilterValue(columnKey: string): string {
+    const filter = this.internalFilters().find(f => f.field === columnKey);
+    return filter ? String(filter.value) : '';
+  }
+
+  // Keyboard navigation
+  protected handleKeyDown(event: KeyboardEvent, row: T, rowIndex: number): void {
+    const displayedData = this.displayedData();
+    const maxIndex = displayedData.length - 1;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (rowIndex < maxIndex) {
+          this.focusedRowIndex.set(rowIndex + 1);
+          this.focusRow(rowIndex + 1);
+        }
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        if (rowIndex > 0) {
+          this.focusedRowIndex.set(rowIndex - 1);
+          this.focusRow(rowIndex - 1);
+        }
+        break;
+      case ' ':
+      case 'Space':
+        event.preventDefault();
+        if (this.selectionMode() !== 'none') {
+          this.toggleRowSelection(row);
+        }
+        break;
+      case 'Enter':
+        event.preventDefault();
+        this.handleAction('select', row, rowIndex);
+        break;
+      case 'Home':
+        event.preventDefault();
+        this.focusedRowIndex.set(0);
+        this.focusRow(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        this.focusedRowIndex.set(maxIndex);
+        this.focusRow(maxIndex);
+        break;
+    }
+  }
+
+  private focusRow(index: number): void {
+    setTimeout(() => {
+      const rows = document.querySelectorAll('.mat-mdc-row');
+      if (rows[index]) {
+        (rows[index] as HTMLElement).focus();
+      }
     });
   }
 

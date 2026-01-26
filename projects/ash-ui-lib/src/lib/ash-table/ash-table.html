@@ -1,98 +1,260 @@
 <div class="ash-table-container">
   @if (loading()) {
-    <div class="loading-state">
-      <mat-spinner diameter="48"></mat-spinner>
-      <p>Loading data...</p>
-    </div>
+    @if (loadingTemplate()) {
+      <ng-container *ngTemplateOutlet="loadingTemplate()!"></ng-container>
+    } @else {
+      <div class="loading-state">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading data...</p>
+      </div>
+    }
   } @else if (error()) {
-    <div class="error-state">
-      <mat-icon>error_outline</mat-icon>
-      <h3>Error</h3>
-      <p>{{ errorMessage() }}</p>
-    </div>
+    @if (errorTemplate()) {
+      <ng-container *ngTemplateOutlet="errorTemplate()!; context: { message: errorMessage() }"></ng-container>
+    } @else {
+      <div class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <h3>Error</h3>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    }
   } @else if (displayedData().length === 0) {
-    <div class="empty-state">
-      <mat-icon>inbox</mat-icon>
-      <h3>No data available</h3>
-      <p>There are no records to display</p>
-    </div>
+    @if (emptyStateTemplate()) {
+      <ng-container *ngTemplateOutlet="emptyStateTemplate()!"></ng-container>
+    } @else {
+      <div class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <h3>No data available</h3>
+        <p>There are no records to display</p>
+      </div>
+    }
   } @else {
-    <div class="table-wrapper">
-      <table 
-        mat-table 
-        [dataSource]="displayedData()" 
-        matSort
-        (matSortChange)="handleSortChange($event)"
-        [attr.aria-label]="config().tableCaption || 'Data table'"
-        [attr.aria-rowcount]="totalRows()"
-        [attr.aria-colcount]="displayedColumnKeys().length">
-        
-        <!-- Selection Column -->
-        @if (selectionMode() !== 'none') {
-          <ng-container matColumnDef="select">
-            <th mat-header-cell *matHeaderCellDef>
-              @if (selectionMode() === 'multi') {
+    <div class="table-wrapper" [class.virtual-scroll-enabled]="config().virtualScroll">
+      @if (config().virtualScroll) {
+        <cdk-virtual-scroll-viewport
+          [itemSize]="virtualScrollConfig().itemSize"
+          [minBufferPx]="virtualScrollConfig().minBufferPx"
+          [maxBufferPx]="virtualScrollConfig().maxBufferPx"
+          class="table-viewport">
+          <table 
+            mat-table 
+            [dataSource]="displayedData()" 
+            matSort
+            (matSortChange)="handleSortChange($event)"
+            [attr.aria-label]="config().tableCaption || 'Data table'"
+            [attr.aria-rowcount]="totalRows()"
+            [attr.aria-colcount]="displayedColumnKeys().length">
+            
+            <!-- Selection Column -->
+            @if (selectionMode() !== 'none') {
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                  @if (selectionMode() === 'multi') {
+                    <mat-checkbox
+                      [checked]="isAllSelected()"
+                      [indeterminate]="selectedRows().size > 0 && !isAllSelected()"
+                      (change)="toggleSelectAll()"
+                      aria-label="Select all rows">
+                    </mat-checkbox>
+                  }
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox
+                    [checked]="isRowSelected(row)"
+                    (change)="toggleRowSelection(row)"
+                    [aria-label]="'Select row'">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+            }
+
+            <!-- Data Columns -->
+            @for (column of visibleColumns(); track column.key) {
+              <ng-container [matColumnDef]="column.key">
+                <th 
+                  mat-header-cell 
+                  *matHeaderCellDef 
+                  [mat-sort-header]="column.sortable ? column.key : ''"
+                  [disabled]="!column.sortable"
+                  [style.width]="column.width || 'auto'">
+                  <div class="header-content">
+                    <span>{{ column.label }}</span>
+                    @if (column.filterable) {
+                      <button 
+                        mat-icon-button 
+                        class="filter-button"
+                        (click)="toggleColumnFilter(column.key); $event.stopPropagation()"
+                        [class.active]="isColumnFiltered(column.key)"
+                        [attr.aria-label]="'Filter ' + column.label">
+                        <mat-icon>filter_list</mat-icon>
+                      </button>
+                    }
+                  </div>
+                  @if (column.filterable && activeFilterColumn() === column.key) {
+                    <div class="filter-input-container" (click)="$event.stopPropagation()">
+                      <input 
+                        type="text"
+                        class="filter-input"
+                        [value]="getColumnFilterValue(column.key)"
+                        (input)="applyColumnFilter(column.key, $any($event.target).value)"
+                        (keydown.escape)="toggleColumnFilter('')"
+                        placeholder="Filter..."
+                        #filterInput>
+                      <button 
+                        mat-icon-button 
+                        (click)="clearColumnFilter(column.key)"
+                        [attr.aria-label]="'Clear filter for ' + column.label">
+                        <mat-icon>clear</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </th>
+                <td 
+                  mat-cell 
+                  *matCellDef="let row; let i = index"
+                  [class]="column.cssClass || ''">
+                  @if (column.cellTemplate) {
+                    <ng-container 
+                      [ngTemplateOutlet]="column.cellTemplate"
+                      [ngTemplateOutletContext]="{ 
+                        $implicit: row, 
+                        row: row, 
+                        column: column, 
+                        rowIndex: i,
+                        value: row[column.key]
+                      }">
+                    </ng-container>
+                  } @else if (column.format) {
+                    {{ column.format(row[column.key]) }}
+                  } @else {
+                    {{ row[column.key] }}
+                  }
+                </td>
+              </ng-container>
+            }
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnKeys(); sticky: config().stickyHeader"></tr>
+            <tr 
+              mat-row 
+              *matRowDef="let row; columns: displayedColumnKeys(); let i = index"
+              [class.selected]="isRowSelected(row)"
+              [class.focused]="focusedRowIndex() === i"
+              [attr.aria-rowindex]="i + 1"
+              [attr.tabindex]="0"
+              (keydown)="handleKeyDown($event, row, i)">
+            </tr>
+          </table>
+        </cdk-virtual-scroll-viewport>
+      } @else {
+        <table 
+          mat-table 
+          [dataSource]="displayedData()" 
+          matSort
+          (matSortChange)="handleSortChange($event)"
+          [attr.aria-label]="config().tableCaption || 'Data table'"
+          [attr.aria-rowcount]="totalRows()"
+          [attr.aria-colcount]="displayedColumnKeys().length">
+          
+          <!-- Selection Column -->
+          @if (selectionMode() !== 'none') {
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef>
+                @if (selectionMode() === 'multi') {
+                  <mat-checkbox
+                    [checked]="isAllSelected()"
+                    [indeterminate]="selectedRows().size > 0 && !isAllSelected()"
+                    (change)="toggleSelectAll()"
+                    aria-label="Select all rows">
+                  </mat-checkbox>
+                }
+              </th>
+              <td mat-cell *matCellDef="let row">
                 <mat-checkbox
-                  [checked]="isAllSelected()"
-                  [indeterminate]="selectedRows().size > 0 && !isAllSelected()"
-                  (change)="toggleSelectAll()"
-                  aria-label="Select all rows">
+                  [checked]="isRowSelected(row)"
+                  (change)="toggleRowSelection(row)"
+                  [aria-label]="'Select row'">
                 </mat-checkbox>
-              }
-            </th>
-            <td mat-cell *matCellDef="let row">
-              <mat-checkbox
-                [checked]="isRowSelected(row)"
-                (change)="toggleRowSelection(row)"
-                [aria-label]="'Select row'">
-              </mat-checkbox>
-            </td>
-          </ng-container>
-        }
+              </td>
+            </ng-container>
+          }
 
-        <!-- Data Columns -->
-        @for (column of visibleColumns(); track column.key) {
-          <ng-container [matColumnDef]="column.key">
-            <th 
-              mat-header-cell 
-              *matHeaderCellDef 
-              [mat-sort-header]="column.sortable ? column.key : ''"
-              [disabled]="!column.sortable"
-              [style.width]="column.width || 'auto'">
-              {{ column.label }}
-            </th>
-            <td 
-              mat-cell 
-              *matCellDef="let row; let i = index"
-              [class]="column.cssClass || ''">
-              @if (column.cellTemplate) {
-                <ng-container 
-                  [ngTemplateOutlet]="column.cellTemplate"
-                  [ngTemplateOutletContext]="{ 
-                    $implicit: row, 
-                    row: row, 
-                    column: column, 
-                    rowIndex: i,
-                    value: row[column.key]
-                  }">
-                </ng-container>
-              } @else if (column.format) {
-                {{ column.format(row[column.key]) }}
-              } @else {
-                {{ row[column.key] }}
-              }
-            </td>
-          </ng-container>
-        }
+          <!-- Data Columns -->
+          @for (column of visibleColumns(); track column.key) {
+            <ng-container [matColumnDef]="column.key">
+              <th 
+                mat-header-cell 
+                *matHeaderCellDef 
+                [mat-sort-header]="column.sortable ? column.key : ''"
+                [disabled]="!column.sortable"
+                [style.width]="column.width || 'auto'">
+                <div class="header-content">
+                  <span>{{ column.label }}</span>
+                  @if (column.filterable) {
+                    <button 
+                      mat-icon-button 
+                      class="filter-button"
+                      (click)="toggleColumnFilter(column.key); $event.stopPropagation()"
+                      [class.active]="isColumnFiltered(column.key)"
+                      [attr.aria-label]="'Filter ' + column.label">
+                      <mat-icon>filter_list</mat-icon>
+                    </button>
+                  }
+                </div>
+                @if (column.filterable && activeFilterColumn() === column.key) {
+                  <div class="filter-input-container" (click)="$event.stopPropagation()">
+                    <input 
+                      type="text"
+                      class="filter-input"
+                      [value]="getColumnFilterValue(column.key)"
+                      (input)="applyColumnFilter(column.key, $any($event.target).value)"
+                      (keydown.escape)="toggleColumnFilter('')"
+                      placeholder="Filter..."
+                      #filterInput>
+                    <button 
+                      mat-icon-button 
+                      (click)="clearColumnFilter(column.key)"
+                      [attr.aria-label]="'Clear filter for ' + column.label">
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                  </div>
+                }
+              </th>
+              <td 
+                mat-cell 
+                *matCellDef="let row; let i = index"
+                [class]="column.cssClass || ''">
+                @if (column.cellTemplate) {
+                  <ng-container 
+                    [ngTemplateOutlet]="column.cellTemplate"
+                    [ngTemplateOutletContext]="{ 
+                      $implicit: row, 
+                      row: row, 
+                      column: column, 
+                      rowIndex: i,
+                      value: row[column.key]
+                    }">
+                  </ng-container>
+                } @else if (column.format) {
+                  {{ column.format(row[column.key]) }}
+                } @else {
+                  {{ row[column.key] }}
+                }
+              </td>
+            </ng-container>
+          }
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumnKeys(); sticky: config().stickyHeader"></tr>
-        <tr 
-          mat-row 
-          *matRowDef="let row; columns: displayedColumnKeys(); let i = index"
-          [class.selected]="isRowSelected(row)"
-          [attr.aria-rowindex]="i + 1">
-        </tr>
-      </table>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnKeys(); sticky: config().stickyHeader"></tr>
+          <tr 
+            mat-row 
+            *matRowDef="let row; columns: displayedColumnKeys(); let i = index"
+            [class.selected]="isRowSelected(row)"
+            [class.focused]="focusedRowIndex() === i"
+            [attr.aria-rowindex]="i + 1"
+            [attr.tabindex]="0"
+            (keydown)="handleKeyDown($event, row, i)">
+          </tr>
+        </table>
+      }
     </div>
 
     @if (pagination()) {
