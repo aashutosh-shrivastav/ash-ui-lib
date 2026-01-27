@@ -18,3 +18,4 @@ export type {
   TableState
 } from './lib/ash-table/models/table-event.model';
 export { CellTemplateDirective } from './lib/ash-table/directives/cell-template.directive';
+export { ResizableColumnDirective } from './lib/ash-table/directives/resizable-column.directive';

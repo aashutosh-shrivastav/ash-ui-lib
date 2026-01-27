@@ -33,6 +33,7 @@ import {
 import { TableDataService } from './services/table-data.service';
 import { TableExportService } from './services/table-export.service';
 import { CellTemplateDirective } from './directives/cell-template.directive';
+import { ResizableColumnDirective } from './directives/resizable-column.directive';
 
 @Component({
   selector: 'lib-ash-table',
@@ -45,6 +46,7 @@ import { CellTemplateDirective } from './directives/cell-template.directive';
     MatIconModule,
     MatCheckboxModule,
     CellTemplateDirective,
+    ResizableColumnDirective,
     ScrollingModule
   ],
   templateUrl: './ash-table.html',
@@ -247,6 +249,14 @@ export class AshTable<T = any> {
       action: actionName,
       row,
       rowIndex
+    });
+  }
+
+  // Column resize handler
+  protected handleColumnResize(columnKey: string, newWidth: number): void {
+    this.columnResize.emit({
+      column: columnKey,
+      width: newWidth
     });
   }
 
