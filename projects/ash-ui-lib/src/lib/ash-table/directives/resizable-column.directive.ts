@@ -1,41 +1,54 @@
-import { Directive, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, inject, input, output, signal, effect, DestroyRef } from '@angular/core';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
  * Directive for resizable table columns
- * Usage: <th libResizableColumn [minWidth]="50" [maxWidth]="500" (onResize)="handleResize($event)">
+ * Usage: <th libResizableColumn [minWidth]="50" [maxWidth]="500" (resize)="handleResize($event)">
  */
 @Directive({
   selector: '[libResizableColumn]',
   host: {
     '[style.position]': '"relative"',
-    '[style.user-select]': 'isResizing ? "none" : "auto"'
+    '[style.user-select]': 'isResizing() ? "none" : "auto"',
+    '[class.resizing]': 'isResizing()'
   }
 })
-export class ResizableColumnDirective implements OnInit, OnDestroy {
-  @Input() minWidth = 50;
-  @Input() maxWidth = 500;
-  @Output() onResize = new EventEmitter<number>();
+export class ResizableColumnDirective {
+  readonly libResizableColumn = input<boolean>(true);
+  readonly minWidth = input<number>(50);
+  readonly maxWidth = input<number>(500);
+  readonly resize = output<number>();
 
-  private destroy$ = new Subject<void>();
-  public isResizing = false;
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly destroyRef = inject(DestroyRef);
+  
+  protected readonly isResizing = signal(false);
   private startX = 0;
   private startWidth = 0;
   private handle!: HTMLElement;
+  private isInitialized = false;
 
-  constructor(private elementRef: ElementRef<HTMLElement>) {}
-
-  ngOnInit(): void {
-    this.createResizeHandle();
-    this.setupEventListeners();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    if (this.handle) {
-      this.handle.remove();
-    }
+  constructor() {
+    // Initialize resize handle and event listeners based on enabled state
+    effect(() => {
+      const enabled = this.libResizableColumn();
+      if (enabled && !this.isInitialized) {
+        this.createResizeHandle();
+        this.setupEventListeners();
+        this.isInitialized = true;
+      } else if (!enabled && this.handle) {
+        this.handle.remove();
+        this.isInitialized = false;
+      }
+    });
+    
+    // Cleanup on destroy
+    this.destroyRef.onDestroy(() => {
+      if (this.handle) {
+        this.handle.remove();
+      }
+    });
   }
 
   private createResizeHandle(): void {
@@ -56,27 +69,27 @@ export class ResizableColumnDirective implements OnInit, OnDestroy {
 
   private setupEventListeners(): void {
     fromEvent<MouseEvent>(this.handle, 'mousedown')
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => this.onMouseDown(event));
 
     fromEvent<MouseEvent>(document, 'mousemove')
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => this.onMouseMove(event));
 
     fromEvent<MouseEvent>(document, 'mouseup')
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onMouseUp());
   }
 
   private onMouseDown(event: MouseEvent): void {
     event.preventDefault();
-    this.isResizing = true;
+    this.isResizing.set(true);
     this.startX = event.pageX;
     this.startWidth = this.elementRef.nativeElement.offsetWidth;
   }
 
   private onMouseMove(event: MouseEvent): void {
-    if (!this.isResizing) {
+    if (!this.isResizing()) {
       return;
     }
 
@@ -84,16 +97,16 @@ export class ResizableColumnDirective implements OnInit, OnDestroy {
     let newWidth = this.startWidth + diff;
 
     // Apply min/max constraints
-    newWidth = Math.max(this.minWidth, Math.min(newWidth, this.maxWidth));
+    newWidth = Math.max(this.minWidth(), Math.min(newWidth, this.maxWidth()));
 
     this.elementRef.nativeElement.style.width = `${newWidth}px`;
   }
 
   private onMouseUp(): void {
-    if (this.isResizing) {
-      this.isResizing = false;
+    if (this.isResizing()) {
+      this.isResizing.set(false);
       const finalWidth = this.elementRef.nativeElement.offsetWidth;
-      this.onResize.emit(finalWidth);
+      this.resize.emit(finalWidth);
     }
   }
 }

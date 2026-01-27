@@ -30,6 +30,15 @@ export interface ColumnDef<T = any> {
   /** Enable column filtering (default: false) */
   filterable?: boolean;
   
+  /** Enable column resizing (default: false) */
+  resizable?: boolean;
+  
+  /** Minimum width for resizable columns (default: 50px) */
+  minWidth?: number;
+  
+  /** Maximum width for resizable columns (default: 500px) */
+  maxWidth?: number;
+  
   /** Fixed column width (CSS value) */
   width?: string;
   

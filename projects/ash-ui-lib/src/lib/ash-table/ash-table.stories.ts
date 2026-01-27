@@ -392,6 +392,86 @@ export const KeyboardNavigation: Story = {
 };
 
 /**
+ * Resizable Columns
+ */
+export const ResizableColumns: Story = {
+  name: 'Resizable Columns',
+  args: {
+    columns: [
+      { 
+        key: 'id', 
+        label: 'ID', 
+        type: 'number', 
+        sortable: true, 
+        width: '80px',
+        resizable: true,
+        minWidth: 60,
+        maxWidth: 150
+      },
+      { 
+        key: 'name', 
+        label: 'Customer Name', 
+        sortable: true, 
+        filterable: true,
+        resizable: true,
+        minWidth: 150,
+        maxWidth: 400
+      },
+      { 
+        key: 'email', 
+        label: 'Email Address', 
+        filterable: true,
+        resizable: true,
+        minWidth: 180,
+        maxWidth: 350
+      },
+      { 
+        key: 'revenue', 
+        label: 'Revenue', 
+        type: 'currency', 
+        sortable: true,
+        filterable: true,
+        resizable: true,
+        minWidth: 100,
+        maxWidth: 250,
+        format: (value: number) => `$${value.toLocaleString()}`
+      },
+      { 
+        key: 'status', 
+        label: 'Status', 
+        sortable: true, 
+        filterable: true,
+        resizable: false
+      },
+      { 
+        key: 'joinDate', 
+        label: 'Join Date', 
+        type: 'date',
+        sortable: true,
+        resizable: true,
+        minWidth: 120,
+        maxWidth: 200,
+        format: (value: Date) => value.toLocaleDateString()
+      }
+    ],
+    dataSource: generateCustomers(50),
+    pagination: true,
+    config: {
+      pageSize: 25,
+      pageSizeOptions: [10, 25, 50, 100],
+      stickyHeader: true
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Table with resizable columns enabled. Hover over the right edge of column headers to see the resize handle (vertical line). Click and drag to resize columns. Each column has configurable min/max width constraints. The Status column is not resizable to demonstrate the feature can be selectively enabled.'
+      }
+    }
+  }
+};
+
+/**
  * All Features Combined
  */
 export const AllFeatures: Story = {

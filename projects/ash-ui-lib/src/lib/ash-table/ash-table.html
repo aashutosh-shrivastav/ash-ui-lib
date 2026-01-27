@@ -76,7 +76,11 @@
                   *matHeaderCellDef 
                   [mat-sort-header]="column.sortable ? column.key : ''"
                   [disabled]="!column.sortable"
-                  [style.width]="column.width || 'auto'">
+                  [style.width]="column.width || 'auto'"
+                  [libResizableColumn]="column.resizable || false"
+                  [minWidth]="column.minWidth || 50"
+                  [maxWidth]="column.maxWidth || 500"
+                  (resize)="handleColumnResize(column.key, $event)">
                   <div class="header-content">
                     <span>{{ column.label }}</span>
                     @if (column.filterable) {
@@ -186,7 +190,11 @@
                 *matHeaderCellDef 
                 [mat-sort-header]="column.sortable ? column.key : ''"
                 [disabled]="!column.sortable"
-                [style.width]="column.width || 'auto'">
+                [style.width]="column.width || 'auto'"
+                [libResizableColumn]="column.resizable || false"
+                [minWidth]="column.minWidth || 50"
+                [maxWidth]="column.maxWidth || 500"
+                (resize)="handleColumnResize(column.key, $event)">
                 <div class="header-content">
                   <span>{{ column.label }}</span>
                   @if (column.filterable) {

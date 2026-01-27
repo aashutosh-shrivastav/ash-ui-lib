@@ -1007,7 +1007,7 @@ export const Performance10K: Story = {
 ### Phase 4: Advanced Features (Week 2)
 - [x] Virtual scrolling setup *(completed: CDK virtual scroll with configurable buffer)*
 - [x] Column filtering UI *(completed: per-column filter with contains operator)*
-- [ ] Resizable columns directive *(not done)*
+- [x] Resizable columns directive *(completed: signal-based directive with min/max width constraints)*
 - [x] Cell template projection *(done: via CellTemplateDirective and contentChildren)*
 - [x] Loading/error states *(done: default states in template)*
 - [x] Customizable loading, error, and empty state templates via @ContentChild('loadingTemplate'), @ContentChild('errorTemplate'), and @ContentChild('emptyStateTemplate') *(completed)*
