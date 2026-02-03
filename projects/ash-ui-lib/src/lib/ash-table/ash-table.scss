@@ -39,7 +39,7 @@ table {
 
   p {
     margin: 0;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--ash-table-empty-text-color, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)));
   }
 }
 
@@ -57,18 +57,18 @@ table {
     font-size: 48px;
     width: 48px;
     height: 48px;
-    color: #f44336;
+    color: var(--ash-table-error-color, var(--mat-sys-error, #f44336));
   }
 
   h3 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: var(--ash-table-state-title-font-size, 20px);
+    font-weight: var(--ash-table-state-title-font-weight, 500);
   }
 
   p {
     margin: 0;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--ash-table-empty-text-color, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)));
   }
 }
 
@@ -86,27 +86,45 @@ table {
     font-size: 64px;
     width: 64px;
     height: 64px;
-    color: rgba(0, 0, 0, 0.38);
+    color: var(--ash-table-empty-icon-color, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.38)));
   }
 
   h3 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: var(--ash-table-state-title-font-size, 20px);
+    font-weight: var(--ash-table-state-title-font-weight, 500);
   }
 
   p {
     margin: 0;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--ash-table-empty-text-color, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)));
   }
 }
 
 /* Table Styles */
 th.mat-mdc-header-cell {
-  font-weight: 600;
-  background-color: var(--ash-table-header-bg, #fafafa);
-  color: var(--ash-table-header-color, rgba(0, 0, 0, 0.87));
+  font-family: var(--ash-table-header-font-family, inherit);
+  font-size: var(--ash-table-header-font-size, 14px);
+  font-weight: var(--ash-table-header-font-weight, 600);
+  line-height: var(--ash-table-header-line-height, 1.5);
+  letter-spacing: var(--ash-table-header-letter-spacing, 0.01em);
+  height: var(--ash-table-header-height, 56px);
+  padding: var(--ash-table-cell-padding-vertical, 12px) var(--ash-table-cell-padding-horizontal, 16px);
+  background-color: var(--ash-table-header-bg, var(--mat-sys-surface-container-high, #fafafa));
+  color: var(--ash-table-header-color, var(--mat-sys-on-surface, rgba(0, 0, 0, 0.87)));
+  border-bottom: 1px solid var(--ash-table-border-color, var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12)));
   position: relative;
+}
+
+td.mat-mdc-cell {
+  font-family: var(--ash-table-cell-font-family, inherit);
+  font-size: var(--ash-table-cell-font-size, 14px);
+  font-weight: var(--ash-table-cell-font-weight, 400);
+  line-height: var(--ash-table-cell-line-height, 1.5);
+  letter-spacing: var(--ash-table-cell-letter-spacing, 0);
+  height: var(--ash-table-row-height, 52px);
+  padding: var(--ash-table-cell-padding-vertical, 12px) var(--ash-table-cell-padding-horizontal, 16px);
+  color: var(--ash-table-cell-color, var(--mat-sys-on-surface, rgba(0, 0, 0, 0.87)));
 }
 
 .header-content {
@@ -122,6 +140,7 @@ th.mat-mdc-header-cell {
   line-height: 32px;
   opacity: 0.5;
   transition: opacity 0.2s ease;
+  color: var(--ash-table-filter-icon-color, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)));
 
   &:hover {
     opacity: 0.8;
@@ -129,7 +148,7 @@ th.mat-mdc-header-cell {
 
   &.active {
     opacity: 1;
-    color: #1976d2;
+    color: var(--ash-table-filter-active-color, var(--mat-sys-primary, #1976d2));
   }
 
   mat-icon {
@@ -150,28 +169,32 @@ th.mat-mdc-header-cell {
 .filter-input {
   flex: 1;
   padding: 6px 8px;
-  border: 1px solid rgba(0, 0, 0, 0.23);
+  border: 1px solid var(--ash-table-filter-input-border, var(--mat-sys-outline, rgba(0, 0, 0, 0.23)));
   border-radius: 4px;
   font-size: 14px;
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s ease;
+  background-color: var(--ash-table-row-bg, var(--mat-sys-surface, #fff));
+  color: var(--ash-table-cell-color, var(--mat-sys-on-surface, rgba(0, 0, 0, 0.87)));
 
   &:focus {
-    border-color: #1976d2;
+    border-color: var(--ash-table-filter-input-focus-border, var(--mat-sys-primary, #1976d2));
   }
 }
 
 tr.mat-mdc-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
+  background-color: var(--ash-table-row-bg, var(--mat-sys-surface, transparent));
 
   &:hover {
-    background-color: var(--ash-table-row-hover-bg, rgba(0, 0, 0, 0.04));
+    background-color: var(--ash-table-row-hover-bg, var(--mat-sys-surface-container-highest, rgba(0, 0, 0, 0.04)));
   }
 
   &.selected {
-    background-color: var(--ash-table-row-selected-bg, #e3f2fd);
+    background-color: var(--ash-table-row-selected-bg, var(--mat-sys-primary-container, #e3f2fd));
+    color: var(--ash-table-row-selected-color, var(--mat-sys-on-primary-container, inherit));
   }
 }
 
@@ -184,7 +207,8 @@ tr.mat-mdc-row {
 
 /* Paginator */
 mat-paginator {
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-top: 1px solid var(--ash-table-paginator-border, var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12)));
+  background-color: var(--ash-table-paginator-bg, var(--mat-sys-surface-container-low, transparent));
 }
 
 /* Host State Classes */
@@ -217,12 +241,12 @@ mat-paginator {
 
 /* Accessibility */
 .mat-mdc-row:focus {
-  outline: 2px solid #1976d2;
+  outline: 2px solid var(--ash-table-filter-input-focus-border, var(--mat-sys-primary, #1976d2));
   outline-offset: -2px;
 }
 
 .mat-mdc-row.focused {
-  background-color: var(--ash-table-row-focused-bg, rgba(25, 118, 210, 0.08));
+  background-color: var(--ash-table-row-focused-bg, var(--mat-sys-secondary-container, rgba(25, 118, 210, 0.08)));
 }
 
 .mat-mdc-row {
@@ -237,11 +261,11 @@ th.mat-mdc-header-cell[libresizablecolumn] {
     transition: background-color 0.2s ease;
 
     &:hover {
-      background-color: rgba(25, 118, 210, 0.3) !important;
+      background-color: color-mix(in srgb, var(--ash-table-resize-handle-hover, var(--mat-sys-primary, #1976d2)) 30%, transparent) !important;
     }
 
     &:active {
-      background-color: rgba(25, 118, 210, 0.5) !important;
+      background-color: color-mix(in srgb, var(--ash-table-resize-handle-active, var(--mat-sys-primary, #1976d2)) 50%, transparent) !important;
     }
   }
 
@@ -250,33 +274,13 @@ th.mat-mdc-header-cell[libresizablecolumn] {
     cursor: col-resize;
 
     .resize-handle {
-      background-color: rgba(25, 118, 210, 0.5) !important;
+      background-color: color-mix(in srgb, var(--ash-table-resize-handle-active, var(--mat-sys-primary, #1976d2)) 50%, transparent) !important;
     }
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  th.mat-mdc-header-cell {
-    background-color: var(--ash-table-header-bg, #303030);
-    color: var(--ash-table-header-color, rgba(255, 255, 255, 0.87));
-  }
-
-  tr.mat-mdc-row:hover {
-    background-color: var(--ash-table-row-hover-bg, rgba(255, 255, 255, 0.08));
-  }
-
-  tr.mat-mdc-row.selected {
-    background-color: var(--ash-table-row-selected-bg, #1565c0);
-  }
-
-  .loading-state p,
-  .empty-state p,
-  .error-state p {
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .empty-state mat-icon {
-    color: rgba(255, 255, 255, 0.5);
-  }
-}
+/* Dark Mode Support
+ * Dark mode colors are now automatically handled by the theming system.
+ * Material Design 3 themes set appropriate CSS variables for both light and dark modes.
+ * No manual dark mode overrides needed - the CSS variables adapt automatically.
+ */

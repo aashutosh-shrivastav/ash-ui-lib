@@ -95,58 +95,62 @@ Angular Material provides Sass mixins to generate themes:
 
 ```scss
 @use '@angular/material' as mat;
+@use '@yourscope/ash-ui-lib/theming' as ash;
 
-// 1. Define a theme
-$my-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  typography: (
-    brand-family: 'Roboto, sans-serif',
-    plain-family: 'Roboto, sans-serif',
-  ),
-  density: (
-    scale: 0,
-  )
-));
-
-// 2. Apply theme globally
+// Apply theme directly to html selector (Material 3 v19+ approach)
 html {
-  @include mat.all-component-themes($my-theme);
+  color-scheme: light;  // Enable proper color scheme
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: (
+      brand-family: 'Roboto, sans-serif',
+      plain-family: 'Roboto, sans-serif',
+    ),
+    density: 0
+  ));
+  
+  // Apply Ash UI Lib themes (no parameter needed!)
+  @include ash.all-component-themes();
 }
 ```
 
 #### 3. Ash UI Lib Component Layer
 
-**Our components automatically inherit Material themes AND expose additional customization:**
+**Our components automatically inherit Material themes using system tokens:**
 
 ```scss
 // components/ash-table/_ash-table-theme.scss
 @use '@angular/material' as mat;
 
-@mixin theme($theme) {
-  // 1. Extract Material theme colors
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  
-  // 2. Apply to custom components
+@mixin theme($theme: null) {
+  // Uses Material's system tokens (--mat-sys-*) automatically
+  // Maps them to component-specific variables for easy override
   lib-ash-table {
-    --ash-table-header-bg: #{mat.get-theme-color($theme, primary, 50)};
-    --ash-table-selected-row: #{mat.get-theme-color($theme, primary, 100)};
-    --ash-table-hover-bg: #{mat.get-theme-color($theme, surface-variant)};
+    --ash-table-header-bg: var(--mat-sys-surface-container-high);
+    --ash-table-selected-row: var(--mat-sys-primary-container);
+    --ash-table-hover-bg: var(--mat-sys-surface-container-highest);
   }
 }
 ```
+
+**Key Benefits of Token-Based Approach:**
+- ✅ **Zero M2 dependencies** - No `mat.define-theme()` or `mat.get-theme-color()` required
+- ✅ **Automatic theme inheritance** - Components use Material's system tokens directly
+- ✅ **Simplified API** - No theme parameter needed in mixins
+- ✅ **Custom branding preserved** - Component-specific variables (`--ash-table-*`) for overrides
+- ✅ **M3 v19+ compatible** - Follows the latest Material Design 3 standards
 
 ### Theming Layers
 
 | Layer | Responsibility | Who Configures |
 |-------|----------------|----------------|
-| **Material Base** | Core component theming (buttons, inputs) | Implementation project |
-| **Ash Component Styles** | Custom component theming (table, dashboard) | Ash UI Lib (auto-inherits Material) |
-| **CSS Variables** | Fine-grained overrides (specific colors, spacing) | Implementation project (optional) |
+| **Material System Tokens** | Base design tokens (`--mat-sys-*`) | Angular Material (automatic) |
+| **Ash Component Variables** | Component-specific tokens (`--ash-table-*`) | Ash UI Lib (maps from Material tokens) |
+| **Custom Overrides** | Fine-grained customization | Implementation project (optional) |
 
 ---
 
@@ -357,35 +361,31 @@ $my-theme: mat.define-light-theme((
 
 #### Option 3: Material Design 3 Theme (Angular 21+)
 
-**Use the new M3 theming API:**
+**Use the new M3 theming API (v19+ - RECOMMENDED):**
 
 ```scss
 // styles.scss
 @use '@angular/material' as mat;
 @use '@yourscope/ash-ui-lib/theming' as ash;
 
-@include mat.core();
-
-// Define M3 theme with custom colors
-$my-m3-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  typography: (
-    brand-family: 'Inter, Roboto, sans-serif',
-    plain-family: 'Inter, Roboto, sans-serif',
-  ),
-  density: (
-    scale: 0,
-  )
-));
-
-// Apply theme
+// Apply M3 theme directly (no mat.define-theme or mat.core needed!)
 html {
-  @include mat.all-component-themes($my-m3-theme);
-  @include ash.all-component-themes($my-m3-theme);
+  color-scheme: light;  // Required for proper color variables
+  
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: (
+      brand-family: 'Inter, Roboto, sans-serif',
+      plain-family: 'Inter, Roboto, sans-serif',
+    ),
+    density: 0
+  ));
+  
+  @include ash.all-component-themes();
 }
 ```
 
@@ -421,22 +421,26 @@ html {
 @use '@angular/material' as mat;
 @use '@yourscope/ash-ui-lib/theming' as ash;
 
-@include mat.core();
-
-// Light theme
-$light-theme: mat.define-light-theme((/* ... */));
-
-// Dark theme
-$dark-theme: mat.define-dark-theme((/* ... */));
-
 // Default: light theme
-@include mat.all-component-themes($light-theme);
-@include ash.all-component-themes($light-theme);
+html.light-theme {
+  color-scheme: light;
+  @include mat.theme((
+    color: (theme-type: light, primary: mat.$violet-palette),
+    typography: Roboto,
+    density: 0
+  ));
+  @include ash.all-component-themes();
+}
 
 // Dark theme class
-.dark-theme {
-  @include mat.all-component-colors($dark-theme);
-  @include ash.all-component-themes($dark-theme);
+html.dark-theme {
+  color-scheme: dark;
+  @include mat.theme((
+    color: (theme-type: dark, primary: mat.$violet-palette),
+    typography: Roboto,
+    density: 0
+  ));
+  @include ash.all-component-themes();
 }
 ```
 
@@ -447,7 +451,9 @@ export class AppComponent {
   
   toggleTheme() {
     this.isDarkMode.update(v => !v);
-    document.body.classList.toggle('dark-theme');
+    const htmlEl = document.documentElement;
+    htmlEl.classList.toggle('light-theme', !this.isDarkMode());
+    htmlEl.classList.toggle('dark-theme', this.isDarkMode());
   }
 }
 ```
@@ -577,11 +583,13 @@ $corporate-theme: mat.define-light-theme((
 @use '@yourscope/ash-ui-lib/theming' as ash;
 @use './brand-theme' as brand;
 
-@include mat.core();
-
-// Apply corporate theme
-@include mat.all-component-themes(brand.$corporate-theme);
-@include ash.all-component-themes(brand.$corporate-theme);
+html {
+  color-scheme: light;
+  
+  // Apply corporate theme config
+  @include mat.theme(brand.$corporate-theme-config);
+  @include ash.all-component-themes();
+}
 
 // Additional brand-specific overrides
 :root {
@@ -814,7 +822,7 @@ export class ThemeService {
 
 ```scss
 @use '@angular/material' as mat;
-@include mat.core();  // Must be called once globally
+// Note: mat.core() is NOT needed in Material 3 v19+
 ```
 
 ### Issue: Components Look Unstyled
