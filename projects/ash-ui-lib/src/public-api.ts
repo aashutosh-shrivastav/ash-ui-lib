@@ -19,3 +19,18 @@ export type {
 } from './lib/ash-table/models/table-event.model';
 export { CellTemplateDirective } from './lib/ash-table/directives/cell-template.directive';
 export { ResizableColumnDirective } from './lib/ash-table/directives/resizable-column.directive';
+
+// AshForm exports
+export { AshForm } from './lib/ash-form/ash-form';
+export type {
+  FormFieldSchema,
+  FieldType,
+  ValidatorConfig,
+  ConditionalExpression,
+  LayoutConfig,
+  FormSubmitEvent,
+  FormValidationState,
+  FieldVisibilityEvent,
+  AutoSaveConfig,
+  AutoSaveStatusEvent
+} from './lib/ash-form/ash-form.types';

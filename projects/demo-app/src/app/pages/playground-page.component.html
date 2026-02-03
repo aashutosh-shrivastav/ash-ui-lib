@@ -1,0 +1,150 @@
+<div class="page-content">
+  <h1>Theme Playground</h1>
+  <p>Interactive theming demonstration with Material Design 3</p>
+  
+  <!-- Component Selector -->
+  <mat-button-toggle-group [(ngModel)]="selectedComponent" class="component-selector">
+    <mat-button-toggle value="table">AshTable</mat-button-toggle>
+    <mat-button-toggle value="form">AshForm</mat-button-toggle>
+  </mat-button-toggle-group>
+  
+  <!-- Table Demo Section -->
+  @if (selectedComponent === 'table') {
+    <div class="component-demo">
+      <!-- Theme Controls -->
+      <mat-expansion-panel class="theme-controls" [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>palette</mat-icon>
+            Theme Controls
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="control-section">
+          <h3>Color Palette</h3>
+          <mat-button-toggle-group [(ngModel)]="selectedPalette" (change)="applyPalette()">
+            <mat-button-toggle value="violet">Violet (Default)</mat-button-toggle>
+            <mat-button-toggle value="indigo">Indigo</mat-button-toggle>
+            <mat-button-toggle value="cyan">Cyan</mat-button-toggle>
+            <mat-button-toggle value="green">Green</mat-button-toggle>
+            <mat-button-toggle value="orange">Orange</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="control-section">
+          <h3>Density Scale</h3>
+          <mat-button-toggle-group [(ngModel)]="densityScale" (change)="applyDensity()">
+            <mat-button-toggle [value]="-2">Dense</mat-button-toggle>
+            <mat-button-toggle [value]="-1">Compact</mat-button-toggle>
+            <mat-button-toggle [value]="0">Standard</mat-button-toggle>
+            <mat-button-toggle [value]="1">Comfortable</mat-button-toggle>
+          </mat-button-toggle-group>
+          <p class="density-info">
+            Current: Row height {{ currentRowHeight() }}px, Header height {{ currentHeaderHeight() }}px
+          </p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="control-section">
+          <h3>Custom Color Overrides</h3>
+          <div class="color-overrides">
+            <div class="color-control">
+              <label>Header Background:</label>
+              <input type="color" [(ngModel)]="customHeaderBg" (change)="applyCustomColors()">
+              <button mat-icon-button (click)="resetColor('headerBg')" title="Reset">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </div>
+            <div class="color-control">
+              <label>Row Hover Background:</label>
+              <input type="color" [(ngModel)]="customRowHover" (change)="applyCustomColors()">
+              <button mat-icon-button (click)="resetColor('rowHover')" title="Reset">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </div>
+            <div class="color-control">
+              <label>Selected Row Background:</label>
+              <input type="color" [(ngModel)]="customRowSelected" (change)="applyCustomColors()">
+              <button mat-icon-button (click)="resetColor('rowSelected')" title="Reset">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Table Demo -->
+      <div class="table-section">
+        <h2>Live Table Demo</h2>
+        <lib-ash-table
+          [columns]="columns()"
+          [dataSource]="products()"
+          [pagination]="true"
+          [selectionMode]="'multi'"
+          [config]="{
+            pageSize: 10,
+            pageSizeOptions: [5, 10, 25, 50],
+            stickyHeader: true
+          }"
+          (rowSelect)="onRowSelect($event)">
+        </lib-ash-table>
+        
+        @if (selectedCount() > 0) {
+          <div class="selection-info">
+            <mat-icon>check_circle</mat-icon>
+            Selected {{ selectedCount() }} product(s)
+          </div>
+        }
+      </div>
+
+      <!-- Theme Information -->
+      <mat-expansion-panel class="theme-info">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>info</mat-icon>
+            Current Theme Configuration
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="info-content">
+          <h3>Active CSS Variables</h3>
+          <div class="css-variables">
+            <div class="variable-item">
+              <code>--ash-table-header-bg:</code>
+              <span class="color-preview" [style.background-color]="getComputedVariable('--ash-table-header-bg')"></span>
+              <span>{{ getComputedVariable('--ash-table-header-bg') }}</span>
+            </div>
+            <div class="variable-item">
+              <code>--ash-table-row-hover-bg:</code>
+              <span class="color-preview" [style.background-color]="getComputedVariable('--ash-table-row-hover-bg')"></span>
+              <span>{{ getComputedVariable('--ash-table-row-hover-bg') }}</span>
+            </div>
+            <div class="variable-item">
+              <code>--ash-table-row-selected-bg:</code>
+              <span class="color-preview" [style.background-color]="getComputedVariable('--ash-table-row-selected-bg')"></span>
+              <span>{{ getComputedVariable('--ash-table-row-selected-bg') }}</span>
+            </div>
+            <div class="variable-item">
+              <code>--ash-table-row-height:</code>
+              <span>{{ getComputedVariable('--ash-table-row-height') }}</span>
+            </div>
+            <div class="variable-item">
+              <code>--ash-table-header-height:</code>
+              <span>{{ getComputedVariable('--ash-table-header-height') }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </div>
+  }
+  
+  <!-- Form Demo Section -->
+  @if (selectedComponent === 'form') {
+    <div class="component-demo">
+      <app-ash-form-demo />
+    </div>
+  }
+</div>
