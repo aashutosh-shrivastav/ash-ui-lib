@@ -17,9 +17,10 @@
 5. [Interface Definitions](#interface-definitions)
 6. [Component API](#component-api)
 7. [Usage Guide](#usage-guide)
-8. [Best Practices Alignment](#best-practices-alignment)
-9. [Performance Considerations](#performance-considerations)
-10. [Accessibility Implementation](#accessibility-implementation)
+8. [Theming Implementation](#theming-implementation)
+9. [Best Practices Alignment](#best-practices-alignment)
+10. [Performance Considerations](#performance-considerations)
+11. [Accessibility Implementation](#accessibility-implementation)
 
 ---
 
@@ -702,6 +703,466 @@ protected readonly columns = signal([
 
 ---
 
+## Theming Implementation
+
+### Overview
+
+AshTable implements **Material Design 3 (v19+)** theming using Material's system tokens (`--mat-sys-*`). This modern approach eliminates the need for `mat.define-theme()` while providing automatic theme inheritance and allowing granular customization through component-specific CSS variables.
+
+> **📚 For comprehensive theming documentation, see:** [Theming Guide](../../guides/theming-guide.md)
+
+### Architecture
+
+The theming system follows a token-based architecture:
+
+```
+┌──────────────────────────────────────────────────┐
+│   Application Theme (styles.scss)                │
+│   - Apply Material theme with mat.theme()        │
+│   - Apply library themes with ash.all-component- │
+│     themes() (no param needed)                    │
+└─────────────────┬────────────────────────────────┘
+                  │
+┌─────────────────▼────────────────────────────────┐
+│   AshTable Theme Mixin (_ash-table-theme.scss)   │
+│   - Extract Material tokens (primary, surface)   │
+│   - Set CSS variables (--ash-table-*)            │
+│   - Apply density/typography configurations      │
+└─────────────────┬────────────────────────────────┘
+                  │
+┌─────────────────▼────────────────────────────────┐
+│   Component Styles (ash-table.scss)              │
+│   - Use CSS variables with Material fallbacks    │
+│   - Structure and layout (not theme-dependent)   │
+└──────────────────────────────────────────────────┘
+```
+
+### Files Structure
+
+```
+projects/ash-ui-lib/src/
+├── _theming.scss                           # Public theming API
+└── lib/ash-table/
+    ├── ash-table.scss                      # Component styles
+    └── _ash-table-theme.scss               # Theme mixin
+```
+
+### Theme Mixin Implementation
+
+The `_ash-table-theme.scss` file exports mixins that use Material's system tokens:
+
+#### 1. Color Mixin
+
+Maps Material Design 3 system tokens to component-specific CSS variables:
+
+```scss
+@mixin color($theme: null) {
+  lib-ash-table {
+    // Header colors - uses Material system tokens
+    --ash-table-header-bg: var(--mat-sys-surface-container-high);
+    --ash-table-header-color: var(--mat-sys-on-surface);
+    
+    // Row states
+    --ash-table-row-bg: var(--mat-sys-surface);
+    --ash-table-row-hover-bg: var(--mat-sys-surface-container-highest);
+    --ash-table-row-selected-bg: var(--mat-sys-primary-container);
+    --ash-table-row-selected-color: var(--mat-sys-on-primary-container);
+    
+    // Borders and dividers
+    --ash-table-border-color: var(--mat-sys-outline-variant);
+    
+    // Error states
+    --ash-table-error-color: var(--mat-sys-error);
+    
+    // ... and 35+ more variables
+  }
+}
+```
+
+**Material System Tokens Used:**
+- `--mat-sys-primary*` - Selection states and primary actions
+- `--mat-sys-surface*` - Backgrounds and elevation
+- `--mat-sys-on-surface*` - Text colors
+- `--mat-sys-outline*` - Borders and dividers
+- `--mat-sys-error*` - Error states
+
+**Key Benefits:**
+- ✅ **No M2 dependencies** - Uses system tokens, not `mat.get-theme-color()`
+- ✅ **Automatic theme sync** - Colors update when Material theme changes
+- ✅ **Runtime customizable** - Can override variables via CSS
+
+#### 2. Typography Mixin
+
+Defines font properties using Material typography tokens with fallbacks:
+
+```scss
+@mixin typography($theme: null) {
+  lib-ash-table {
+    // Header typography - uses Material typography tokens
+    --ash-table-header-font-family: var(--mat-sys-title-medium-font, Roboto, sans-serif);
+    --ash-table-header-font-size: var(--mat-sys-title-medium-size, 14px);
+    --ash-table-header-font-weight: var(--mat-sys-title-medium-weight, 600);
+    --ash-table-header-line-height: var(--mat-sys-title-medium-line-height, 1.5);
+    --ash-table-header-letter-spacing: 0.01em;
+    
+    // Cell typography
+    --ash-table-cell-font-family: Roboto, sans-serif;
+    --ash-table-cell-font-size: 14px;
+    --ash-table-cell-font-weight: 400;
+    
+    // State messages (loading, error, empty)
+    --ash-table-state-title-font-size: 20px;
+    --ash-table-state-title-font-weight: 500;
+  }
+}
+```
+
+#### 3. Density Mixin
+
+Adapts spacing based on Material density scale (-2 to 1):
+
+```scss
+@mixin density($theme) {
+  $density-scale: mat.get-theme-density($theme);
+  
+  lib-ash-table {
+    @if $density-scale == 0 {
+      // Standard (default)
+      --ash-table-row-height: 52px;
+      --ash-table-header-height: 56px;
+      --ash-table-cell-padding-vertical: 12px;
+      --ash-table-cell-padding-horizontal: 16px;
+    } @else if $density-scale == -1 {
+      // Compact
+      --ash-table-row-height: 44px;
+      --ash-table-header-height: 48px;
+      --ash-table-cell-padding-vertical: 8px;
+      --ash-table-cell-padding-horizontal: 12px;
+    } @else if $density-scale == -2 {
+      // Dense
+      --ash-table-row-height: 36px;
+      --ash-table-header-height: 40px;
+      --ash-table-cell-padding-vertical: 6px;
+      --ash-table-cell-padding-horizontal: 8px;
+    } @else if $density-scale == 1 {
+      // Comfortable
+      --ash-table-row-height: 60px;
+      --ash-table-header-height: 64px;
+      --ash-table-cell-padding-vertical: 16px;
+      --ash-table-cell-padding-horizontal: 20px;
+    }
+  }
+}
+```
+
+#### 4. Master Theme Mixin
+
+Applies all aspects automatically:
+
+```scss
+@mixin theme($theme) {
+  @if mat.theme-has($theme, color) {
+    @include color($theme);
+  }
+  @if mat.theme-has($theme, typography) {
+    @include typography($theme);
+  }
+  @if mat.theme-has($theme, density) {
+    @include density($theme);
+  }
+}
+```
+
+### Component Styles with CSS Variables
+
+The `ash-table.scss` file uses CSS variables with Material Design 3 token fallbacks:
+
+```scss
+// Header styling
+th.mat-mdc-header-cell {
+  background-color: var(--ash-table-header-bg, var(--mat-sys-surface-container-high, #fafafa));
+  color: var(--ash-table-header-color, var(--mat-sys-on-surface, rgba(0, 0, 0, 0.87)));
+  font-family: var(--ash-table-header-font-family, inherit);
+  font-size: var(--ash-table-header-font-size, 14px);
+  font-weight: var(--ash-table-header-font-weight, 600);
+  height: var(--ash-table-header-height, 56px);
+  padding: var(--ash-table-cell-padding-vertical, 12px) 
+           var(--ash-table-cell-padding-horizontal, 16px);
+}
+
+// Row hover states
+tr.mat-mdc-row:hover {
+  background-color: var(--ash-table-row-hover-bg, 
+                        var(--mat-sys-surface-container-highest, rgba(0, 0, 0, 0.04)));
+}
+
+// Selected row
+tr.mat-mdc-row.selected {
+  background-color: var(--ash-table-row-selected-bg, 
+                        var(--mat-sys-primary-container, #e3f2fd));
+  color: var(--ash-table-row-selected-color, 
+             var(--mat-sys-on-primary-container, inherit));
+}
+```
+
+**Fallback Strategy:**
+1. First try component-specific variable (`--ash-table-header-bg`)
+2. Fall back to Material system token (`--mat-sys-surface-container-high`)
+3. Final fallback to hardcoded value (`#fafafa`)
+
+### Application Integration
+
+#### Basic Setup (Automatic Theming)
+
+In your application's `styles.scss`:
+
+```scss
+@use '@angular/material' as mat;
+@use 'ash-ui-lib/theming' as ash;
+
+// Apply Material 3 theme directly (v19+ approach)
+html {
+  color-scheme: light;  // Required for proper CSS variables
+  
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$violet-palette,
+    ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Roboto,
+    ),
+    density: 0
+  ));
+  
+  @include mat.system-classes();
+  
+  // Apply AshTable theme - no parameter needed!
+  @include ash.all-component-themes();
+}
+```
+
+**That's it!** AshTable now inherits your theme automatically using Material's system tokens (`--mat-sys-*`), including:
+- ✅ Light/dark mode support
+- ✅ Brand colors from your palette
+- ✅ Typography settings
+- ✅ Component-specific variables (`--ash-table-*`) for custom overrides
+
+**That's it!** AshTable now inherits your theme automatically, including:
+- ✅ Light/dark mode support
+- ✅ Brand colors from your palette
+- ✅ Density scale
+- ✅ Typography settings
+
+#### Dark Mode Support
+
+```scss
+html.light-theme {
+  color-scheme: light;
+  
+  @include mat.theme((
+    color: (theme-type: light, primary: mat.$violet-palette),
+    typography: Roboto,
+    density: 0
+  ));
+  
+  @include ash.all-component-themes();
+}
+
+html.dark-theme {
+  color-scheme: dark;
+  
+  @include mat.theme((
+    color: (theme-type: dark, primary: mat.$violet-palette),
+    typography: Roboto,
+    density: 0
+  ));
+  
+  @include ash.all-component-themes();
+}
+```
+
+Toggle themes by switching the class on `<html>`:
+
+```typescript
+document.documentElement.classList.remove('light-theme', 'dark-theme');
+document.documentElement.classList.add(`${mode}-theme`);
+```
+
+### Customization Options
+
+#### 1. Runtime CSS Variable Override
+
+For component-specific customization:
+
+```typescript
+@Component({
+  template: `
+    <lib-ash-table
+      [style.--ash-table-header-bg]="'#1976d2'"
+      [style.--ash-table-row-selected-bg]="'#64b5f6'"
+      [columns]="columns()"
+      [dataSource]="data()">
+    </lib-ash-table>
+  `
+})
+```
+
+#### 2. Global CSS Override
+
+In your application styles:
+
+```scss
+lib-ash-table {
+  // Override for all tables
+  --ash-table-header-bg: #1976d2;
+  --ash-table-header-color: white;
+  --ash-table-row-height: 48px;
+}
+
+// Override for specific contexts
+.compact-view lib-ash-table {
+  --ash-table-row-height: 36px;
+  --ash-table-cell-padding-vertical: 6px;
+}
+```
+
+#### 3. Granular Theme Mixin
+
+For advanced use cases, apply only specific aspects:
+
+```scss
+@use 'ash-ui-lib/theming' as ash;
+
+html {
+  // Only apply colors (skip typography/density)
+  @include ash.ash-table-color($theme);
+}
+```
+
+### Exposed CSS Variables Reference
+
+AshTable exposes **45+ CSS variables** for customization:
+
+#### Color Variables
+
+| Variable | Description | Default Token |
+|----------|-------------|---------------|
+| `--ash-table-header-bg` | Header background color | `surface-container-high` |
+| `--ash-table-header-color` | Header text color | `on-surface` |
+| `--ash-table-row-bg` | Row background | `surface` |
+| `--ash-table-row-hover-bg` | Hover state background | `surface-container-highest` |
+| `--ash-table-row-selected-bg` | Selected row background | `primary-container` |
+| `--ash-table-row-selected-color` | Selected row text | `on-primary-container` |
+| `--ash-table-row-focused-bg` | Focused row background | `secondary-container` |
+| `--ash-table-border-color` | Border and divider color | `outline-variant` |
+| `--ash-table-error-color` | Error state color | `error` |
+| `--ash-table-filter-active-color` | Active filter icon | `primary` |
+| `--ash-table-paginator-border` | Paginator top border | `outline-variant` |
+
+#### Typography Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `--ash-table-header-font-family` | Header font | `Roboto, sans-serif` |
+| `--ash-table-header-font-size` | Header font size | `14px` |
+| `--ash-table-header-font-weight` | Header font weight | `600` |
+| `--ash-table-cell-font-family` | Cell font | `Roboto, sans-serif` |
+| `--ash-table-cell-font-size` | Cell font size | `14px` |
+| `--ash-table-cell-font-weight` | Cell font weight | `400` |
+
+#### Density Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `--ash-table-row-height` | Data row height | `52px` |
+| `--ash-table-header-height` | Header row height | `56px` |
+| `--ash-table-cell-padding-vertical` | Vertical cell padding | `12px` |
+| `--ash-table-cell-padding-horizontal` | Horizontal cell padding | `16px` |
+
+> **💡 Tip:** See `_ash-table-theme.scss` for the complete list of 45+ variables
+
+### Density Scale Visual Guide
+
+```
+Density -2 (Dense):
+├─ Row height: 36px
+├─ Header height: 40px
+└─ Padding: 6px / 8px
+
+Density -1 (Compact):
+├─ Row height: 44px
+├─ Header height: 48px
+└─ Padding: 8px / 12px
+
+Density 0 (Standard) ⭐ DEFAULT:
+├─ Row height: 52px
+├─ Header height: 56px
+└─ Padding: 12px / 16px
+
+Density 1 (Comfortable):
+├─ Row height: 60px
+├─ Header height: 64px
+└─ Padding: 16px / 20px
+```
+
+### Interactive Theming Demo
+
+The playground component (`demo-app/src/app/pages/playground-page.component.ts`) demonstrates:
+
+- **Palette switching** - 5 prebuilt Material palettes
+- **Density controls** - All 4 density scales with live preview
+- **Custom color pickers** - Runtime CSS variable overrides
+- **Live inspector** - Shows computed values of all theme variables
+- **Light/dark mode** - Toggle via toolbar button
+
+**Access the demo:** `http://localhost:4200/playground`
+
+### Best Practices
+
+#### ✅ Do
+
+- Use the library's theme mixins (`@include ash.all-component-themes($theme)`)
+- Leverage CSS variables for runtime customization
+- Follow Material Design 3 color semantics (don't use `primary` for errors)
+- Test themes with WCAG contrast checker tools
+- Apply density consistently across your application
+
+#### ❌ Don't
+
+- Hardcode colors directly in component styles
+- Override Material system tokens (`--mat-sys-*`) unless necessary
+- Mix light and dark mode tokens in the same theme
+- Set density values that break accessibility (< 36px rows)
+
+### Accessibility Considerations
+
+The theming system ensures:
+
+- **WCAG 2.1 AA contrast ratios** - All Material token combinations meet minimum 4.5:1 contrast
+- **Focus indicators** - `--ash-table-row-focused-bg` provides visible keyboard focus
+- **High contrast mode** - CSS variables adapt to system high contrast settings
+- **Color blindness** - Selection states use both color AND background changes
+
+### Migration Guide
+
+If migrating from a non-themed table:
+
+1. **Remove hardcoded colors** from component styles
+2. **Apply library theme** in your `styles.scss`
+3. **Test light/dark modes** to verify token inheritance
+4. **Identify custom colors** and map to CSS variables
+5. **Update tests** to account for dynamic theming
+
+### Related Documentation
+
+- **[Theming Guide](../../guides/theming-guide.md)** - Comprehensive theming documentation
+- **[RTL Guide](../../guides/rtl-guide.md)** - Right-to-left layout support
+- **[Storybook](../../../storybook-static/index.html)** - Interactive theme examples
+
+---
+
 ## Best Practices Alignment
 
 ### ✅ Angular 20+ Modern Patterns
@@ -1022,7 +1483,7 @@ export const Performance10K: Story = {
 - [ ] CSV export service
 - [ ] Excel export (optional)
 - [ ] PDF export (optional)
-- [ ] Theming support *(see docs/guides/theming-guide.md)*
+- [x] Theming support *(COMPLETED - Material Design 3 integration with 45+ CSS variables)*
 - [ ] RTL compatibility *(see docs/guides/rtl-guide.md)*
 
 ### Phase 7: Documentation & Testing (Week 4)

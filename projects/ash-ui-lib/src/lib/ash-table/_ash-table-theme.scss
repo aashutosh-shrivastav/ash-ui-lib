@@ -1,0 +1,88 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+/// Applies color theming for AshTable component
+/// Uses Material's system tokens (--mat-sys-*) for automatic theming
+/// Components expose custom variables (--ash-table-*) for easy overrides
+@mixin color($theme) {
+  lib-ash-table {
+    // Header colors - use neutral palette for surfaces
+    --ash-table-header-bg: var(--mat-sys-surface-container-high);
+    --ash-table-header-color: var(--mat-sys-on-surface);
+    --ash-table-header-border: var(--mat-sys-outline-variant);
+    
+    // Row states - interactive feedback
+    --ash-table-row-bg: var(--mat-sys-surface);
+    --ash-table-row-hover-bg: var(--mat-sys-surface-container-highest);
+    --ash-table-row-selected-bg: var(--mat-sys-primary-container);
+    --ash-table-row-selected-color: var(--mat-sys-on-primary-container);
+    --ash-table-row-focused-bg: var(--mat-sys-secondary-container);
+    
+    // Cell content
+    --ash-table-cell-color: var(--mat-sys-on-surface);
+    --ash-table-cell-secondary-color: var(--mat-sys-on-surface-variant);
+    
+    // Borders and dividers
+    --ash-table-border-color: var(--mat-sys-outline-variant);
+    --ash-table-divider-color: var(--mat-sys-outline-variant);
+    
+    // State overlays
+    --ash-table-loading-overlay-bg: var(--mat-sys-surface-container-high);
+    --ash-table-error-color: var(--mat-sys-error);
+    --ash-table-error-bg: var(--mat-sys-error-container);
+    
+    // Filter and actions
+    --ash-table-filter-icon-color: var(--mat-sys-on-surface-variant);
+    --ash-table-filter-active-color: var(--mat-sys-primary);
+    --ash-table-filter-input-border: var(--mat-sys-outline);
+    --ash-table-filter-input-focus-border: var(--mat-sys-primary);
+    
+    // Paginator
+    --ash-table-paginator-bg: var(--mat-sys-surface-container-low);
+    --ash-table-paginator-border: var(--mat-sys-outline-variant);
+    
+    // Empty state
+    --ash-table-empty-icon-color: var(--mat-sys-outline);
+    --ash-table-empty-text-color: var(--mat-sys-on-surface-variant);
+    
+    // Resizable columns
+    --ash-table-resize-handle-hover: var(--mat-sys-primary);
+    --ash-table-resize-handle-active: var(--mat-sys-primary);
+  }
+}
+
+/// Applies typography theming for AshTable component
+/// Uses Material's typography system tokens
+@mixin typography($theme) {
+  lib-ash-table {
+    // Header typography
+    --ash-table-header-font-family: var(--mat-sys-title-medium-font, Roboto, sans-serif);
+    --ash-table-header-font-size: var(--mat-sys-title-medium-size, 14px);
+    --ash-table-header-font-weight: var(--mat-sys-title-medium-weight, 600);
+    --ash-table-header-line-height: var(--mat-sys-title-medium-line-height, 1.5);
+    --ash-table-header-letter-spacing: var(--mat-sys-title-medium-tracking, 0.01em);
+    
+    // Body/cell typography
+    --ash-table-cell-font-family: var(--mat-sys-body-medium-font, Roboto, sans-serif);
+    --ash-table-cell-font-size: var(--mat-sys-body-medium-size, 14px);
+    --ash-table-cell-font-weight: var(--mat-sys-body-medium-weight, 400);
+    --ash-table-cell-line-height: var(--mat-sys-body-medium-line-height, 1.5);
+    --ash-table-cell-letter-spacing: var(--mat-sys-body-medium-tracking, 0);
+    
+    // State message typography
+    --ash-table-state-title-font-family: var(--mat-sys-headline-small-font, Roboto, sans-serif);
+    --ash-table-state-title-font-size: var(--mat-sys-headline-small-size, 20px);
+    --ash-table-state-title-font-weight: var(--mat-sys-headline-small-weight, 500);
+    
+    --ash-table-state-body-font-family: var(--mat-sys-body-medium-font, Roboto, sans-serif);
+    --ash-table-state-body-font-size: var(--mat-sys-body-medium-size, 14px);
+  }
+}
+
+/// Main theme mixin that applies all theming aspects
+/// No longer requires mat.define-theme() - works with M3 v19+ inline config
+@mixin theme($theme) {
+  @include color($theme);
+  @include typography($theme);
+  // Note: Density is now handled by Material's built-in system
+}

@@ -1,0 +1,45 @@
+// Public theming API for Ash UI Lib
+// Import this in your application styles to apply library component themes
+//
+// Usage (M3 v19+ compatible):
+//   @use '@angular/material' as mat;
+//   @use 'ash-ui-lib/theming' as ash;
+//
+//   html {
+//     @include mat.theme((
+//       color: (theme-type: light, primary: mat.$violet-palette),
+//       typography: Roboto,
+//       density: 0
+//     ));
+//     @include ash.all-component-themes();  // No theme param needed!
+//   }
+
+@use './lib/ash-table/ash-table-theme';
+
+// Forward component theme mixins with prefixes for granular control
+@forward './lib/ash-table/ash-table-theme' as ash-table-*;
+
+// Convenience mixin to apply all component themes at once
+// This is the recommended approach for most applications
+// No longer requires $theme parameter - uses Material's system tokens automatically
+@mixin all-component-themes($theme: null) {
+  @include ash-table-theme.theme($theme);
+  // TODO: Add other component themes as they are implemented
+  // @include ash-form-theme.theme($theme);
+  // @include ash-calendar-theme.theme($theme);
+  // @include ash-chart-theme.theme($theme);
+  // @include ash-dashboard-theme.theme($theme);
+}
+
+// Granular theming mixins for advanced use cases
+/// Apply only color theming for all components
+@mixin all-component-colors($theme: null) {
+  @include ash-table-theme.color($theme);
+  // TODO: Add other component color themes
+}
+
+/// Apply only typography theming for all components
+@mixin all-component-typographies($theme: null) {
+  @include ash-table-theme.typography($theme);
+  // TODO: Add other component typography themes
+}
