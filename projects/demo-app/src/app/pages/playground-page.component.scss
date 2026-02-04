@@ -1,0 +1,163 @@
+.page-content {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+p {
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 16px;
+}
+
+.component-selector {
+  margin-bottom: 32px;
+  display: flex;
+  gap: 8px;
+}
+
+.component-demo {
+  margin-top: 24px;
+}
+
+.theme-controls, .theme-info {
+  margin-bottom: 32px;
+}
+
+.control-section {
+  padding: 16px 0;
+}
+
+.control-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+}
+
+mat-button-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.density-info {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.color-overrides {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.color-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  label {
+    font-size: 14px;
+    color: var(--mat-sys-on-surface);
+    min-width: 180px;
+  }
+
+  input[type="color"] {
+    width: 60px;
+    height: 36px;
+    border: 1px solid var(--mat-sys-outline);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.table-section {
+  margin-bottom: 32px;
+
+  h2 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.selection-info {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  border-left: 4px solid var(--mat-sys-primary);
+  border-radius: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+mat-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+mat-divider {
+  margin: 16px 0;
+}
+
+.info-content {
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.css-variables {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.variable-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  background-color: var(--mat-sys-surface-container-low);
+  border-radius: 4px;
+  font-size: 13px;
+
+  code {
+    font-family: 'Courier New', monospace;
+    color: var(--mat-sys-primary);
+    min-width: 250px;
+  }
+
+  .color-preview {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--mat-sys-outline);
+    border-radius: 4px;
+  }
+
+  span:last-child {
+    color: var(--mat-sys-on-surface-variant);
+    font-family: 'Courier New', monospace;
+  }
+}

@@ -1,1 +1,48 @@
-<p>ash-form works!</p>
+<div class="ash-form-container" [attr.aria-label]="ariaLabel()">
+  @if (loading()) {
+    <div class="ash-form-loading-overlay">
+      <div class="ash-form-spinner"></div>
+    </div>
+  }
+
+  <form [formGroup]="formGroup()" (ngSubmit)="handleSubmit()" class="ash-form" [class.ash-form-readonly]="readonly()">
+    <!-- Form fields with grid layout -->
+    <div class="ash-form-fields" [class.ash-form-grid]="layout().type === 'grid'" [style.grid-template-columns]="getGridColumns()">
+      @for (field of visibleFields(); track field.name) {
+        <div 
+          class="ash-form-field-wrapper"
+          [style.grid-column]="field.gridColumn || 'auto'"
+          [style.grid-row]="field.gridRow || 'auto'"
+          [style.width]="field.width || 'auto'"
+        >
+          <lib-ash-field-renderer
+            [control]="getControl(field.name)"
+            [config]="field"
+            [readonly]="readonly()"
+            [showError]="shouldShowError(field.name)"
+            [showRequiredMarker]="showRequiredMarker()"
+          />
+        </div>
+      }
+    </div>
+
+    <!-- Form actions -->
+    <div class="ash-form-actions">
+      <button 
+        type="submit" 
+        class="ash-form-submit-btn"
+        [disabled]="formGroup().invalid || loading()"
+      >
+        Submit
+      </button>
+      <button 
+        type="button" 
+        class="ash-form-reset-btn" 
+        (click)="reset()"
+        [disabled]="loading()"
+      >
+        Reset
+      </button>
+    </div>
+  </form>
+</div>
