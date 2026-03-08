@@ -1,0 +1,47 @@
+// _ash-toast-theme.scss
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin theme($theme) {
+  @include color($theme);
+  @include typography($theme);
+}
+
+@mixin color($theme) {
+  // Set default toast variables based on Material system tokens
+  :root,
+  html.light-theme {
+    --ash-toast-bg: var(--mat-sys-surface-container-lowest);
+    --ash-toast-color: var(--mat-sys-on-surface);
+    --ash-toast-border: transparent;
+    --ash-toast-success-border: var(--mat-sys-primary);
+    --ash-toast-error-border: var(--mat-sys-error);
+    --ash-toast-warning-border: var(--mat-sys-tertiary);
+    --ash-toast-icon-color: var(--mat-sys-primary);
+    --ash-toast-close-color: var(--mat-sys-on-surface-variant);
+    --ash-toast-close-hover-bg: var(--mat-sys-surface-variant);
+  }
+
+  // Dark theme overrides
+  html.dark-theme {
+    --ash-toast-bg: var(--mat-sys-surface-container-lowest);
+    --ash-toast-color: var(--mat-sys-on-surface);
+    --ash-toast-border: rgba(255, 255, 255, 0.1);
+    --ash-toast-success-border: var(--mat-sys-primary);
+    --ash-toast-error-border: var(--mat-sys-error);
+    --ash-toast-warning-border: var(--mat-sys-tertiary);
+    --ash-toast-icon-color: var(--mat-sys-primary);
+    --ash-toast-close-color: var(--mat-sys-on-surface-variant);
+    --ash-toast-close-hover-bg: var(--mat-sys-surface-variant);
+  }
+}
+
+@mixin typography($theme) {
+  :root {
+    --ash-toast-font-family: inherit;
+  }
+}
+
+@mixin density($theme) {
+  // Density adjustments if needed
+}

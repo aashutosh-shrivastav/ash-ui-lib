@@ -1,6 +1,6 @@
 import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { AshTable, ColumnDef } from 'ash-ui-lib';
+import { AshTable, ColumnDef, AshToastService } from 'ash-ui-lib';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -35,6 +35,7 @@ interface Product {
 })
 export class PlaygroundPageComponent {
   private readonly platformId = inject(PLATFORM_ID);
+  protected readonly toast = inject(AshToastService);
   
   protected selectedComponent = 'table';
   protected readonly selectedCount = signal(0);
@@ -52,6 +53,14 @@ export class PlaygroundPageComponent {
     if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => this.updateDensitySignals(), 100);
     }
+  }
+
+  protected showSuccessToast(): void {
+    this.toast.success('Operation completed successfully',50000);
+  }
+
+  protected showErrorToast(): void {
+    this.toast.error('An error occurred',50000);
   }
   
   protected readonly columns = signal<ColumnDef<Product>[]>([

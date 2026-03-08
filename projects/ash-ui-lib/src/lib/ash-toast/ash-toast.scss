@@ -1,0 +1,73 @@
+// ash-toast.scss - Component structural styles
+:host {
+  display: block;
+}
+
+.ash-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--ash-toast-border, transparent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  background: var(--ash-toast-bg, var(--mat-sys-surface));
+  color: var(--ash-toast-color, var(--mat-sys-on-surface));
+  min-width: 240px;
+  max-width: 420px;
+  margin: 8px;
+  font-family: var(--ash-toast-font-family, inherit);
+}
+
+// RTL support: reverse flex direction
+:host-context([dir="rtl"]) .ash-toast {
+  flex-direction: row-reverse;
+}
+
+.ash-toast[data-type="success"] {
+  border-inline-start: 4px solid var(--ash-toast-success-border, var(--mat-sys-primary));
+}
+
+.ash-toast[data-type="error"] {
+  border-inline-start: 4px solid var(--ash-toast-error-border, var(--mat-sys-error));
+}
+
+.ash-toast[data-type="warning"] {
+  border-inline-start: 4px solid var(--ash-toast-warning-border, var(--mat-sys-tertiary));
+}
+
+.ash-toast__body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.ash-toast__icon {
+  font-size: 18px;
+  color: var(--ash-toast-icon-color, var(--mat-sys-primary));
+}
+
+.ash-toast__message {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.ash-toast__close {
+  background: transparent;
+  border: 0;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--ash-toast-close-color, var(--mat-sys-on-surface-variant));
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.ash-toast__close:hover {
+  background: var(--ash-toast-close-hover-bg, var(--mat-sys-surface-variant));
+}
+
+.ash-toast__close mat-icon {
+  font-size: 18px;
+}
