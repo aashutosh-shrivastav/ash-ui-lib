@@ -34,3 +34,8 @@ export type {
   AutoSaveConfig,
   AutoSaveStatusEvent
 } from './lib/ash-form/ash-form.types';
+
+// AshToast exports
+export { AshToastComponent } from './lib/ash-toast/ash-toast.component';
+export { AshToastService } from './lib/ash-toast/ash-toast.service';
+export type { ToastConfig, ToastType } from './lib/ash-toast/ash-toast.service';
