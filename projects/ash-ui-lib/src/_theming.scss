@@ -15,15 +15,18 @@
 //   }
 
 @use './lib/ash-table/ash-table-theme';
+@use './lib/ash-toast/ash-toast-theme';
 
 // Forward component theme mixins with prefixes for granular control
 @forward './lib/ash-table/ash-table-theme' as ash-table-*;
+@forward './lib/ash-toast/ash-toast-theme' as ash-toast-*;
 
 // Convenience mixin to apply all component themes at once
 // This is the recommended approach for most applications
 // No longer requires $theme parameter - uses Material's system tokens automatically
 @mixin all-component-themes($theme: null) {
   @include ash-table-theme.theme($theme);
+  @include ash-toast-theme.theme($theme);
   // TODO: Add other component themes as they are implemented
   // @include ash-form-theme.theme($theme);
   // @include ash-calendar-theme.theme($theme);
@@ -35,11 +38,13 @@
 /// Apply only color theming for all components
 @mixin all-component-colors($theme: null) {
   @include ash-table-theme.color($theme);
+  @include ash-toast-theme.color($theme);
   // TODO: Add other component color themes
 }
 
 /// Apply only typography theming for all components
 @mixin all-component-typographies($theme: null) {
   @include ash-table-theme.typography($theme);
+  @include ash-toast-theme.typography($theme);
   // TODO: Add other component typography themes
 }
