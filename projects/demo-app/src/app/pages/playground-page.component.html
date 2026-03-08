@@ -1,6 +1,10 @@
 <div class="page-content">
   <h1>Theme Playground</h1>
   <p>Interactive theming demonstration with Material Design 3</p>
+  <div class="toast-controls" style="margin:12px 0;display:flex;gap:8px;">
+    <button type="button" (click)="showSuccessToast()">Show Success Toast</button>
+    <button type="button" (click)="showErrorToast()">Show Error Toast</button>
+  </div>
   
   <!-- Component Selector -->
   <mat-button-toggle-group [(ngModel)]="selectedComponent" class="component-selector">
