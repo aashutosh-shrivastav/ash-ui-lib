@@ -161,5 +161,3 @@ stockData$ = of({
 
 <div align="center">⁂</div>
 
-[^1]: goals.career
-

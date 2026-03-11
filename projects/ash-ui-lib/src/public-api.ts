@@ -39,3 +39,16 @@ export type {
 export { AshToastComponent } from './lib/ash-toast/ash-toast.component';
 export { AshToastService } from './lib/ash-toast/ash-toast.service';
 export type { ToastConfig, ToastType } from './lib/ash-toast/ash-toast.service';
+
+// AshChart exports
+export { AshChartComponent as AshChart } from './lib/ash-chart/ash-chart.component';
+export type {
+  ChartSeriesData,
+  ChartClickEvent,
+  ZoomRange,
+  DataPointInfo,
+  ChartType,
+  EChartsOptions,
+  YAxisConfig,
+  XAxisConfig
+} from './lib/ash-chart/types';

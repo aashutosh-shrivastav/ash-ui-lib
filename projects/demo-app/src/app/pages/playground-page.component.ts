@@ -1,12 +1,13 @@
 import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { AshTable, ColumnDef, AshToastService } from 'ash-ui-lib';
+import { AshTable, ColumnDef, AshToastService, AshChart, ChartSeriesData, ChartType } from 'ash-ui-lib';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { AshFormDemoComponent } from './ash-form-demo.component';
 
 interface Product {
@@ -22,7 +23,9 @@ interface Product {
   selector: 'app-playground-page',
   imports: [
     AshTable,
+    AshChart,
     AshFormDemoComponent,
+    CommonModule,
     MatButtonToggleModule,
     MatSliderModule,
     MatExpansionModule,
@@ -48,6 +51,204 @@ export class PlaygroundPageComponent {
   protected readonly currentRowHeight = signal(52);
   protected readonly currentHeaderHeight = signal(56);
   
+  // Chart demo data
+  protected readonly selectedChart = signal<ChartType>('line');
+  protected readonly lineChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Revenue',
+        data: [120, 132, 101, 134, 90, 230, 210, 220, 182, 191, 234, 290]
+      },
+      {
+        name: 'Profit',
+        data: [220, 182, 191, 234, 290, 330, 310, 320, 332, 301, 334, 360]
+      }
+    ]
+  });
+
+  protected readonly areaChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Income',
+        data: [120, 132, 101, 134, 90, 230, 210, 220, 182, 191, 234, 290]
+      },
+      {
+        name: 'Expenses',
+        data: [220, 182, 191, 234, 290, 330, 310, 320, 332, 301, 334, 360]
+      }
+    ]
+  });
+
+  protected readonly barChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Q1 Sales',
+        data: [320, 302, 301, 334, 390]
+      },
+      {
+        name: 'Q2 Sales',
+        data: [120, 132, 101, 134, 90]
+      },
+      {
+        name: 'Q3 Sales',
+        data: [220, 182, 191, 234, 290]
+      }
+    ]
+  });
+
+  protected readonly pieChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Market Share',
+        data: [
+          { name: 'Product A', value: 45 },
+          { name: 'Product B', value: 30 },
+          { name: 'Product C', value: 15 },
+          { name: 'Product D', value: 10 }
+        ]
+      }
+    ]
+  });
+
+  protected readonly gaugeChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'KPI Achievement',
+        data: [75],
+        type: 'gauge'
+      }
+    ]
+  });
+
+  protected readonly heatmapChartData = signal<ChartSeriesData>({
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+    series: [
+      {
+        name: 'Heatmap Data',
+        data: Array.from({ length: 10 }, (_, x) =>
+          Array.from({ length: 7 }, (_, y) => [x, y, Math.floor(Math.random() * 100)])
+        ).flat()
+      }
+    ]
+  });
+
+  protected readonly scatterChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Series 1',
+        data: Array.from({ length: 20 }, () => [
+          Math.random() * 100,
+          Math.random() * 100
+        ])
+      },
+      {
+        name: 'Series 2',
+        data: Array.from({ length: 20 }, () => [
+          Math.random() * 100,
+          Math.random() * 100
+        ])
+      }
+    ]
+  });
+
+  protected readonly radarChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Skills',
+        data: [80, 90, 70, 85, 75, 95]
+      },
+      {
+        name: 'Competitor',
+        data: [70, 85, 75, 80, 80, 85]
+      }
+    ]
+  });
+
+  protected readonly funnelChartData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Sales Funnel',
+        data: [
+          { name: 'Leads', value: 100 },
+          { name: 'Interested', value: 75 },
+          { name: 'Qualified', value: 50 },
+          { name: 'Negotiation', value: 30 },
+          { name: 'Closed', value: 20 }
+        ]
+      }
+    ]
+  });
+
+  protected readonly stackedBarData = signal<ChartSeriesData>({
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    series: [
+      {
+        name: 'Product A',
+        data: [120, 132, 101, 134, 90, 230],
+        stack: 'total'
+      },
+      {
+        name: 'Product B',
+        data: [220, 182, 191, 234, 290, 330],
+        stack: 'total'
+      },
+      {
+        name: 'Product C',
+        data: [150, 232, 201, 154, 190, 330],
+        stack: 'total'
+      }
+    ]
+  });
+
+  protected readonly groupedBarData = signal<ChartSeriesData>({
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    series: [
+      {
+        name: 'Product A',
+        data: [120, 132, 101, 134, 90, 230]
+      },
+      {
+        name: 'Product B',
+        data: [220, 182, 191, 234, 290, 330]
+      },
+      {
+        name: 'Product C',
+        data: [150, 232, 201, 154, 190, 330]
+      }
+    ]
+  });
+
+  protected readonly improvedRadarData = signal<ChartSeriesData>({
+    categories: ['Sales', 'Marketing', 'Development', 'Customer Support', 'Information Technology', 'Administration'],
+    series: [
+      {
+        name: 'Team A',
+        data: [85, 90, 78, 82, 88, 92]
+      },
+      {
+        name: 'Team B',
+        data: [78, 82, 85, 78, 92, 85]
+      }
+    ]
+  });
+
+  protected readonly geoMapData = signal<ChartSeriesData>({
+    series: [
+      {
+        name: 'Geographic Distribution',
+        type: 'scatter',
+        data: [
+          { name: 'New York', value: [-74.0060, 40.7128, 8500000] },
+          { name: 'London', value: [-0.1278, 51.5074, 9000000] },
+          { name: 'Tokyo', value: [139.6503, 35.6762, 13960000] },
+          { name: 'Singapore', value: [103.8198, 1.3521, 5850000] },
+          { name: 'Dubai', value: [55.2708, 25.2048, 3600000] },
+          { name: 'Sydney', value: [151.2093, -33.8688, 5300000] }
+        ]
+      }
+    ]
+  });
+
   constructor() {
     // Initialize density on load
     if (isPlatformBrowser(this.platformId)) {
@@ -258,7 +459,7 @@ export class PlaygroundPageComponent {
     return computedStyle.getPropertyValue(variableName).trim() || 'Not set';
   }
 
-  private updateDensitySignals(): void {
+  protected updateDensitySignals(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     
     const tableElement = document.querySelector('lib-ash-table') as HTMLElement;
@@ -276,5 +477,31 @@ export class PlaygroundPageComponent {
     if (headerHeight) {
       this.currentHeaderHeight.set(parseInt(headerHeight));
     }
+  }
+
+  protected getCurrentChartData(): ChartSeriesData {
+    const dataMap: { [key: string]: ChartSeriesData } = {
+      'line': this.lineChartData(),
+      'area': this.areaChartData(),
+      'bar': this.barChartData(),
+      'stacked-bar': this.stackedBarData(),
+      'grouped-bar': this.groupedBarData(),
+      'pie': this.pieChartData(),
+      'gauge': this.gaugeChartData(),
+      'heatmap': this.heatmapChartData(),
+      'scatter': this.scatterChartData(),
+      'radar': this.improvedRadarData(),
+      'funnel': this.funnelChartData(),
+      'geo': this.geoMapData()
+    };
+    return dataMap[this.selectedChart()] || this.lineChartData();
+  }
+
+  protected onChartClick(event: any): void {
+    this.toast.success(`Chart clicked on ${event.series || 'chart'}`, 3000);
+  }
+
+  protected onChartZoom(event: any): void {
+    console.log('Chart zoom/pan event:', event);
   }
 }
