@@ -1,0 +1,18 @@
+<div class="ash-chart-container" [style.height]="height()" [style.width]="width()">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else {
+    <div
+      echarts
+      [options]="chartOptions()"
+      [theme]="theme()"
+      [autoResize]="responsive()"
+      (chartClick)="onChartEvents($event)"
+      (chartMouseover)="onChartEvents($event)"
+      (chartDataZoom)="onChartEvents($event)"
+      class="chart-content">
+    </div>
+  }
+</div>

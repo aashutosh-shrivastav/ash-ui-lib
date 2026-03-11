@@ -161,3 +161,72 @@ mat-divider {
     font-family: 'Courier New', monospace;
   }
 }
+
+// Chart-specific styles
+.chart-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+
+  mat-button-toggle {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+
+.chart-display {
+  margin-bottom: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chart-container {
+  padding: 24px;
+  background-color: var(--mat-sys-surface-container-lowest);
+  border-radius: 4px;
+  min-height: 520px;
+
+  ash-chart {
+    display: block;
+    width: 100%;
+  }
+}
+
+.chart-info {
+  h3 {
+    margin: 16px 0 12px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin: 8px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--mat-sys-on-surface);
+  }
+
+  ul {
+    margin: 12px 0 0 20px;
+    padding: 0;
+    list-style: disc;
+
+    li {
+      margin: 8px 0;
+      font-size: 14px;
+      color: var(--mat-sys-on-surface);
+      line-height: 1.6;
+
+      strong {
+        color: var(--mat-sys-primary);
+        font-weight: 600;
+      }
+    }
+  }
+}

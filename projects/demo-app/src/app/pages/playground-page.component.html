@@ -10,6 +10,7 @@
   <mat-button-toggle-group [(ngModel)]="selectedComponent" class="component-selector">
     <mat-button-toggle value="table">AshTable</mat-button-toggle>
     <mat-button-toggle value="form">AshForm</mat-button-toggle>
+    <mat-button-toggle value="chart">AshChart</mat-button-toggle>
   </mat-button-toggle-group>
   
   <!-- Table Demo Section -->
@@ -149,6 +150,140 @@
   @if (selectedComponent === 'form') {
     <div class="component-demo">
       <app-ash-form-demo />
+    </div>
+  }
+  
+  <!-- Chart Demo Section -->
+  @if (selectedComponent === 'chart') {
+    <div class="component-demo">
+      <h2>Chart Gallery</h2>
+      <p>Interactive charts powered by Apache ECharts and ngx-echarts</p>
+      
+      <!-- Chart Type Selector -->
+      <mat-expansion-panel class="theme-controls" [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>bar_chart</mat-icon>
+            Chart Types
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="control-section">
+          <mat-button-toggle-group [value]="selectedChart()" (change)="selectedChart.set($event.value)" class="chart-selector">
+            <mat-button-toggle value="line">📈 Line</mat-button-toggle>
+            <mat-button-toggle value="area">📉 Area</mat-button-toggle>
+            <mat-button-toggle value="bar">📊 Bar</mat-button-toggle>
+            <mat-button-toggle value="stacked-bar">📚 Stacked</mat-button-toggle>
+            <mat-button-toggle value="grouped-bar">⊞ Grouped</mat-button-toggle>
+            <mat-button-toggle value="pie">🥧 Pie</mat-button-toggle>
+            <mat-button-toggle value="gauge">🎯 Gauge</mat-button-toggle>
+            <mat-button-toggle value="heatmap">🔥 Heatmap</mat-button-toggle>
+            <mat-button-toggle value="scatter">●● Scatter</mat-button-toggle>
+            <mat-button-toggle value="radar">⬢ Radar</mat-button-toggle>
+            <mat-button-toggle value="funnel">∨ Funnel</mat-button-toggle>
+            <mat-button-toggle value="geo">🌍 Geo</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Chart Display -->
+      <div class="chart-display">
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>visualization</mat-icon>
+              {{ (selectedChart() || 'line') | uppercase }} Chart
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          
+          <div class="chart-container">
+            <ash-chart
+              [type]="selectedChart()"
+              [seriesData]="getCurrentChartData()"
+              [height]="'500px'"
+              [width]="'100%'"
+              [theme]="'light'"
+              [loading]="false"
+              [visualMap]="selectedChart() === 'heatmap' ? { min: 0, max: 100, inRange: { color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'] } } : undefined"
+              (chartClick)="onChartClick($event)"
+              (dataZoom)="onChartZoom($event)">
+            </ash-chart>
+          </div>
+        </mat-expansion-panel>
+      </div>
+
+      <!-- Chart Information -->
+      <mat-expansion-panel class="chart-info">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>info</mat-icon>
+            Chart Information
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="info-content">
+          <h3>{{ (selectedChart() || 'line') | uppercase }} Chart Details</h3>
+          @switch (selectedChart()) {
+            @case ('line') {
+              <p><strong>Use Case:</strong> Trend analysis, time-series data, comparing multiple metrics</p>
+              <p><strong>Features:</strong> Multi-series support, smooth animations, hover tooltips</p>
+            }
+            @case ('area') {
+              <p><strong>Use Case:</strong> Cumulative data, stacked metrics, resource utilization</p>
+              <p><strong>Features:</strong> Stacked areas, gradient fills, data comparison</p>
+            }
+            @case ('bar') {
+              <p><strong>Use Case:</strong> Category comparison, rankings, performance metrics</p>
+              <p><strong>Features:</strong> Horizontal/vertical bars, custom colors, tooltips</p>
+            }
+            @case ('stacked-bar') {
+              <p><strong>Use Case:</strong> Composition breakdown, cumulative totals, segment analysis</p>
+              <p><strong>Features:</strong> Stacked segments, total values, percentage calculations</p>
+            }
+            @case ('grouped-bar') {
+              <p><strong>Use Case:</strong> Side-by-side comparisons, multiple categories, performance metrics</p>
+              <p><strong>Features:</strong> Grouped bars without stacking, easy comparison between groups</p>
+            }
+            @case ('pie') {
+              <p><strong>Use Case:</strong> Part-to-whole relationships, percentages, market share</p>
+              <p><strong>Features:</strong> Donut mode, custom labels, legend integration</p>
+            }
+            @case ('gauge') {
+              <p><strong>Use Case:</strong> KPI tracking, progress indicators, status monitoring</p>
+              <p><strong>Features:</strong> Customizable ranges, animations, threshold colors</p>
+            }
+            @case ('heatmap') {
+              <p><strong>Use Case:</strong> Correlation matrices, density visualization, time patterns</p>
+              <p><strong>Features:</strong> Color gradients, interactive cells, visualMap support</p>
+            }
+            @case ('scatter') {
+              <p><strong>Use Case:</strong> Correlation analysis, outlier detection, pattern recognition</p>
+              <p><strong>Features:</strong> Bubble size variation, custom colors, zoom support</p>
+            }
+            @case ('radar') {
+              <p><strong>Use Case:</strong> Multi-dimensional comparisons, skill matrices, capability assessment</p>
+              <p><strong>Features:</strong> Multiple series overlay, area fills, 6+ dimensions</p>
+            }
+            @case ('funnel') {
+              <p><strong>Use Case:</strong> Sales pipeline, conversion funnels, drop-off analysis</p>
+              <p><strong>Features:</strong> Sequential stages, custom colors, percentage labels</p>
+            }
+            @case ('geo') {
+              <p><strong>Use Case:</strong> Geographic data visualization, regional analysis, location-based metrics</p>
+              <p><strong>Features:</strong> Interactive maps, pan/zoom controls, data point markers, regional data</p>
+            }
+          }
+          
+          <h3 style="margin-top: 16px;">Interactive Features</h3>
+          <ul>
+            <li>🖱️ <strong>Hover:</strong> View detailed tooltips for data points</li>
+            <li>📌 <strong>Click:</strong> Trigger custom actions (check console logs)</li>
+            <li>🔍 <strong>Zoom/Pan:</strong> Zoom into regions and pan across the chart</li>
+            <li>✔️ <strong>Legend:</strong> Click legend items to toggle series visibility</li>
+            <li>📱 <strong>Responsive:</strong> Auto-adjusts to container size</li>
+          </ul>
+        </div>
+      </mat-expansion-panel>
     </div>
   }
 </div>
