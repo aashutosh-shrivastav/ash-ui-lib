@@ -16,10 +16,12 @@
 
 @use './lib/ash-table/ash-table-theme';
 @use './lib/ash-toast/ash-toast-theme';
+@use './lib/ash-calendar/ash-calendar-theme';
 
 // Forward component theme mixins with prefixes for granular control
 @forward './lib/ash-table/ash-table-theme' as ash-table-*;
 @forward './lib/ash-toast/ash-toast-theme' as ash-toast-*;
+@forward './lib/ash-calendar/ash-calendar-theme' as ash-calendar-*;
 
 // Convenience mixin to apply all component themes at once
 // This is the recommended approach for most applications
@@ -27,9 +29,9 @@
 @mixin all-component-themes($theme: null) {
   @include ash-table-theme.theme($theme);
   @include ash-toast-theme.theme($theme);
+  @include ash-calendar-theme.theme($theme);
   // TODO: Add other component themes as they are implemented
   // @include ash-form-theme.theme($theme);
-  // @include ash-calendar-theme.theme($theme);
   // @include ash-chart-theme.theme($theme);
   // @include ash-dashboard-theme.theme($theme);
 }
@@ -39,6 +41,7 @@
 @mixin all-component-colors($theme: null) {
   @include ash-table-theme.color($theme);
   @include ash-toast-theme.color($theme);
+  @include ash-calendar-theme.color($theme);
   // TODO: Add other component color themes
 }
 
@@ -46,5 +49,6 @@
 @mixin all-component-typographies($theme: null) {
   @include ash-table-theme.typography($theme);
   @include ash-toast-theme.typography($theme);
+  @include ash-calendar-theme.typography($theme);
   // TODO: Add other component typography themes
 }

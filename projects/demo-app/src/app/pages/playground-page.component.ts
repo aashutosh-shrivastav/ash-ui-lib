@@ -1,6 +1,6 @@
 import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { AshTable, ColumnDef, AshToastService, AshChart, ChartSeriesData, ChartType } from 'ash-ui-lib';
+import { AshTable, ColumnDef, AshToastService, AshChart, ChartSeriesData, ChartType, AshCalendar, DateStyle } from 'ash-ui-lib';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -24,6 +24,7 @@ interface Product {
   imports: [
     AshTable,
     AshChart,
+    AshCalendar,
     AshFormDemoComponent,
     CommonModule,
     MatButtonToggleModule,
@@ -50,6 +51,110 @@ export class PlaygroundPageComponent {
   
   protected readonly currentRowHeight = signal(52);
   protected readonly currentHeaderHeight = signal(56);
+
+  // Calendar demo data
+  protected readonly selectedCalendarType = signal<'empty' | 'success' | 'alert' | 'warning' | 'info' | 'mixed' | 'fire' | 'restrictions' | 'disabled' | 'rtl' | 'manyEvents'>('mixed');
+  
+  // Calendar reference dates for template
+  protected readonly calendarRefDate = new Date(2026, 2, 20); // March 20, 2026
+  protected readonly calendarMinDate = new Date(2026, 2, 1);   // March 1, 2026
+  protected readonly calendarMaxDate = new Date(2026, 2, 31);  // March 31, 2026
+  
+  protected readonly emptyCalendarData = signal<DateStyle[]>([]);
+  
+  protected readonly successCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 5), cssClass: 'event-success', tooltip: 'Project launched' },
+    { date: new Date(2026, 2, 12), cssClass: 'event-success', tooltip: 'Milestone reached' },
+    { date: new Date(2026, 2, 19), cssClass: 'event-success', tooltip: 'Release day' },
+    { date: new Date(2026, 2, 26), cssClass: 'event-success', tooltip: 'Deployment successful' }
+  ]);
+
+  protected readonly alertCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 3), cssClass: 'event-alert', tooltip: 'Deadline approaching' },
+    { date: new Date(2026, 2, 10), cssClass: 'event-alert', tooltip: 'Critical issue' },
+    { date: new Date(2026, 2, 17), cssClass: 'event-alert', tooltip: 'Urgent review' },
+    { date: new Date(2026, 2, 25), cssClass: 'event-alert', tooltip: 'System maintenance' }
+  ]);
+
+  protected readonly mixedCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 2), cssClass: 'event-info', tooltip: 'Team meeting' },
+    { date: new Date(2026, 2, 5), cssClass: 'event-success', tooltip: 'Project launched' },
+    { date: new Date(2026, 2, 8), cssClass: 'event-warning', tooltip: 'Review pending' },
+    { date: new Date(2026, 2, 12), cssClass: 'event-success', tooltip: 'Milestone reached' },
+    { date: new Date(2026, 2, 15), cssClass: 'event-alert', tooltip: 'Urgent issue' },
+    { date: new Date(2026, 2, 18), cssClass: 'event-info', tooltip: 'Conference' },
+    { date: new Date(2026, 2, 22), cssClass: 'event-success', tooltip: 'Deployment successful' },
+    { date: new Date(2026, 2, 25), cssClass: 'event-warning', tooltip: 'Maintenance window' }
+  ]);
+
+  protected readonly restrictedCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 5), cssClass: 'event-success', tooltip: 'Available' },
+    { date: new Date(2026, 2, 10), cssClass: 'event-info', tooltip: 'Available' },
+    { date: new Date(2026, 2, 15), cssClass: 'event-success', tooltip: 'Available' },
+    { date: new Date(2026, 2, 20), cssClass: 'event-success', tooltip: 'Today - Available' }
+  ]);
+
+  protected readonly disabledCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 5), cssClass: 'event-success', tooltip: 'Not selectable' },
+    { date: new Date(2026, 2, 12), cssClass: 'event-alert', tooltip: 'Not selectable' }
+  ]);
+
+  protected readonly warningCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 4), cssClass: 'event-warning', tooltip: 'Scheduled maintenance' },
+    { date: new Date(2026, 2, 9), cssClass: 'event-warning', tooltip: 'System update pending' },
+    { date: new Date(2026, 2, 16), cssClass: 'event-warning', tooltip: 'Performance review' },
+    { date: new Date(2026, 2, 23), cssClass: 'event-warning', tooltip: 'Database optimization' }
+  ]);
+
+  protected readonly infoCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 3), cssClass: 'event-info', tooltip: 'Team standup' },
+    { date: new Date(2026, 2, 7), cssClass: 'event-info', tooltip: 'Sprint planning' },
+    { date: new Date(2026, 2, 11), cssClass: 'event-info', tooltip: 'All hands meeting' },
+    { date: new Date(2026, 2, 14), cssClass: 'event-info', tooltip: 'One-on-one reviews' },
+    { date: new Date(2026, 2, 21), cssClass: 'event-info', tooltip: 'Retrospective' },
+    { date: new Date(2026, 2, 28), cssClass: 'event-info', tooltip: 'Q2 planning' }
+  ]);
+
+  protected readonly fireCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 5), cssClass: 'event-fire', tooltip: 'Critical issue - System overload' },
+    { date: new Date(2026, 2, 8), cssClass: 'event-fire', tooltip: 'Emergency maintenance required' },
+    { date: new Date(2026, 2, 12), cssClass: 'event-success', tooltip: 'Issue resolved' },
+    { date: new Date(2026, 2, 15), cssClass: 'event-success', tooltip: 'System stabilized' }
+  ]);
+
+  protected readonly rtlCalendarData = signal<DateStyle[]>([
+    { date: new Date(2026, 2, 5), cssClass: 'event-success', tooltip: 'مرحبا - مشروع تم إطلاقه' },
+    { date: new Date(2026, 2, 12), cssClass: 'event-alert', tooltip: 'مشكلة حرجة' },
+    { date: new Date(2026, 2, 19), cssClass: 'event-info', tooltip: 'اجتماع الفريق' },
+    { date: new Date(2026, 2, 26), cssClass: 'event-success', tooltip: 'نشر ناجح' }
+  ]);
+
+  protected readonly manyEventsData = signal<DateStyle[]>([
+    // Week 1
+    { date: new Date(2026, 2, 2), cssClass: 'event-info', tooltip: 'Event 1' },
+    { date: new Date(2026, 2, 3), cssClass: 'event-success', tooltip: 'Event 2' },
+    { date: new Date(2026, 2, 4), cssClass: 'event-warning', tooltip: 'Event 3' },
+    { date: new Date(2026, 2, 5), cssClass: 'event-alert', tooltip: 'Event 4' },
+    { date: new Date(2026, 2, 6), cssClass: 'event-info', tooltip: 'Event 5' },
+    // Week 2
+    { date: new Date(2026, 2, 9), cssClass: 'event-success', tooltip: 'Event 6' },
+    { date: new Date(2026, 2, 10), cssClass: 'event-warning', tooltip: 'Event 7' },
+    { date: new Date(2026, 2, 11), cssClass: 'event-alert', tooltip: 'Event 8' },
+    { date: new Date(2026, 2, 12), cssClass: 'event-fire', tooltip: 'Event 9' },
+    { date: new Date(2026, 2, 13), cssClass: 'event-info', tooltip: 'Event 10' },
+    // Week 3
+    { date: new Date(2026, 2, 16), cssClass: 'event-success', tooltip: 'Event 11' },
+    { date: new Date(2026, 2, 17), cssClass: 'event-warning', tooltip: 'Event 12' },
+    { date: new Date(2026, 2, 18), cssClass: 'event-alert', tooltip: 'Event 13' },
+    { date: new Date(2026, 2, 19), cssClass: 'event-success', tooltip: 'Event 14' },
+    { date: new Date(2026, 2, 20), cssClass: 'event-fire', tooltip: 'Event 15' },
+    // Week 4
+    { date: new Date(2026, 2, 23), cssClass: 'event-info', tooltip: 'Event 16' },
+    { date: new Date(2026, 2, 24), cssClass: 'event-success', tooltip: 'Event 17' },
+    { date: new Date(2026, 2, 25), cssClass: 'event-warning', tooltip: 'Event 18' },
+    { date: new Date(2026, 2, 26), cssClass: 'event-alert', tooltip: 'Event 19' },
+    { date: new Date(2026, 2, 27), cssClass: 'event-success', tooltip: 'Event 20' }
+  ]);
   
   // Chart demo data
   protected readonly selectedChart = signal<ChartType>('line');
@@ -503,5 +608,27 @@ export class PlaygroundPageComponent {
 
   protected onChartZoom(event: any): void {
     console.log('Chart zoom/pan event:', event);
+  }
+
+  protected getCurrentCalendarData(): DateStyle[] {
+    const dataMap: { [key: string]: DateStyle[] } = {
+      'empty': this.emptyCalendarData(),
+      'success': this.successCalendarData(),
+      'alert': this.alertCalendarData(),
+      'warning': this.warningCalendarData(),
+      'info': this.infoCalendarData(),
+      'mixed': this.mixedCalendarData(),
+      'fire': this.fireCalendarData(),
+      'restrictions': this.restrictedCalendarData(),
+      'disabled': this.disabledCalendarData(),
+      'rtl': this.rtlCalendarData(),
+      'manyEvents': this.manyEventsData()
+    };
+    return dataMap[this.selectedCalendarType()] || this.mixedCalendarData();
+  }
+
+  protected onCalendarDateSelect(date: Date): void {
+    this.toast.success(`Selected: ${date.toLocaleDateString()}`, 3000);
+    console.log('Calendar date selected:', date);
   }
 }

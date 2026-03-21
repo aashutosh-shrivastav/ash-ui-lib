@@ -10,6 +10,7 @@
   <mat-button-toggle-group [(ngModel)]="selectedComponent" class="component-selector">
     <mat-button-toggle value="table">AshTable</mat-button-toggle>
     <mat-button-toggle value="form">AshForm</mat-button-toggle>
+    <mat-button-toggle value="calendar">AshCalendar</mat-button-toggle>
     <mat-button-toggle value="chart">AshChart</mat-button-toggle>
   </mat-button-toggle-group>
   
@@ -150,6 +151,142 @@
   @if (selectedComponent === 'form') {
     <div class="component-demo">
       <app-ash-form-demo />
+    </div>
+  }
+  
+  <!-- Calendar Demo Section -->
+  @if (selectedComponent === 'calendar') {
+    <div class="component-demo">
+      <mat-expansion-panel class="theme-controls" [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>calendar_month</mat-icon>
+            Calendar Type Selector
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="control-section">
+          <mat-button-toggle-group [value]="selectedCalendarType()" (change)="selectedCalendarType.set($event.value)" class="calendar-selector">
+            <mat-button-toggle value="empty">📭 Empty</mat-button-toggle>
+            <mat-button-toggle value="success">✅ Success Events</mat-button-toggle>
+            <mat-button-toggle value="alert">⚠️ Alert Events</mat-button-toggle>
+            <mat-button-toggle value="warning">📋 Warning Events</mat-button-toggle>
+            <mat-button-toggle value="info">ℹ️ Info Events</mat-button-toggle>
+            <mat-button-toggle value="mixed">🎯 Mixed Events</mat-button-toggle>
+            <mat-button-toggle value="fire">🔥 Fire Events</mat-button-toggle>
+            <mat-button-toggle value="restrictions">🔒 Restricted Dates</mat-button-toggle>
+            <mat-button-toggle value="disabled">🚫 Disabled</mat-button-toggle>
+            <mat-button-toggle value="rtl">🌍 RTL Mode</mat-button-toggle>
+            <mat-button-toggle value="manyEvents">📊 Many Events</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Calendar Display -->
+      <div class="calendar-display">
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>event_note</mat-icon>
+              {{ (selectedCalendarType() | uppercase) }} Calendar View
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          
+          <div class="calendar-container">
+            <lib-ash-calendar
+              [dateStyles]="getCurrentCalendarData()"
+              [viewDate]="calendarRefDate"
+              [minDate]="selectedCalendarType() === 'restrictions' ? calendarMinDate : null"
+              [maxDate]="selectedCalendarType() === 'restrictions' ? calendarMaxDate : null"
+              [disabled]="selectedCalendarType() === 'disabled'"
+              [dir]="selectedCalendarType() === 'rtl' ? 'rtl' : 'ltr'"
+              (dateSelect)="onCalendarDateSelect($event)"
+            />
+          </div>
+        </mat-expansion-panel>
+      </div>
+
+      <!-- Calendar Information -->
+      <mat-expansion-panel class="calendar-info">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>info</mat-icon>
+            Calendar Type Information
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="info-content">
+          <h3>{{ (selectedCalendarType() || 'mixed') | uppercase }} Calendar Details</h3>
+          @switch (selectedCalendarType()) {
+            @case ('empty') {
+              <p><strong>Description:</strong> Empty calendar with no date styles configured</p>
+              <p><strong>Use Case:</strong> Starting point for building custom calendars, minimal styling</p>
+              <p><strong>Features:</strong> Basic date navigation, today indicator, date selection</p>
+            }
+            @case ('success') {
+              <p><strong>Description:</strong> Calendar with success event indicators (green styling)</p>
+              <p><strong>Use Case:</strong> Showing completed milestones, successful deployments, achievements</p>
+              <p><strong>Features:</strong> Custom CSS classes, event tooltips, status tracking</p>
+            }
+            @case ('alert') {
+              <p><strong>Description:</strong> Calendar with alert/warning indicators (red styling)</p>
+              <p><strong>Use Case:</strong> Deadlines, critical issues, maintenance windows, urgent tasks</p>
+              <p><strong>Features:</strong> Visual alerts, tooltips on hover, importance indicators</p>
+            }
+            @case ('warning') {
+              <p><strong>Description:</strong> Calendar with warning indicators (orange styling)</p>
+              <p><strong>Use Case:</strong> Scheduled maintenance, pending updates, system monitoring, caution alerts</p>
+              <p><strong>Features:</strong> Warning-specific styling, attention-getting colors, scheduled task tracking</p>
+            }
+            @case ('info') {
+              <p><strong>Description:</strong> Calendar with informational indicators (blue styling)</p>
+              <p><strong>Use Case:</strong> Team meetings, conferences, announcements, general information</p>
+              <p><strong>Features:</strong> Information-focused design, multiple info events, no action required</p>
+            }
+            @case ('mixed') {
+              <p><strong>Description:</strong> Calendar displaying multiple event types with different colors</p>
+              <p><strong>Use Case:</strong> Complex scheduling, multi-status tracking, comprehensive event visualization</p>
+              <p><strong>Features:</strong> Multiple CSS classes, color-coded events, rich tooltips</p>
+              <p><strong>Event Types:</strong> Success (✅), Alert (⚠️), Warning (📋), Info (ℹ️)</p>
+            }
+            @case ('fire') {
+              <p><strong>Description:</strong> Calendar with fire/critical event indicators (SVG backgrounds)</p>
+              <p><strong>Use Case:</strong> Critical incidents, emergency situations, system failures, urgent escalations</p>
+              <p><strong>Features:</strong> Fire SVG backgrounds, high-visibility styling, emergency notification styling</p>
+            }
+            @case ('restrictions') {
+              <p><strong>Description:</strong> Calendar with min/max date restrictions</p>
+              <p><strong>Use Case:</strong> Limited date selection, booking calendars, event registration periods</p>
+              <p><strong>Features:</strong> Min/max dates enforcement, restricted range highlighting, disabled dates</p>
+              <p><strong>Range:</strong> March 1-31, 2026 only</p>
+            }
+            @case ('disabled') {
+              <p><strong>Description:</strong> Disabled calendar preventing all interactions</p>
+              <p><strong>Use Case:</strong> Read-only displays, loading states, disabled workflows</p>
+              <p><strong>Features:</strong> Visual feedback for disabled state, no date selection allowed</p>
+            }
+            @case ('rtl') {
+              <p><strong>Description:</strong> Calendar in right-to-left (RTL) mode with Arabic tooltips</p>
+              <p><strong>Use Case:</strong> Supporting Arabic, Hebrew, Persian, and other RTL languages</p>
+              <p><strong>Features:</strong> Automatic RTL layout, mirrored navigation, RTL-aware typography</p>
+            }
+            @case ('manyEvents') {
+              <p><strong>Description:</strong> Calendar with 20 events distributed throughout the month</p>
+              <p><strong>Use Case:</strong> Performance testing, busy calendars, high event density visualization</p>
+              <p><strong>Features:</strong> Multiple events per day, memory efficiency, smooth rendering with many dates</p>
+            }
+          }
+          
+          <h3 style="margin-top: 16px;">Interactive Features</h3>
+          <ul>
+            <li>🖱️ <strong>Click Date:</strong> Select dates and trigger events</li>
+            <li>📌 <strong>Hover:</strong> View tooltips for styled dates</li>
+            <li>➡️ <strong>Navigate:</strong> Use arrows to change months</li>
+            <li>⭐ <strong>Today:</strong> Current date is prominently marked</li>
+            <li>🎨 <strong>Custom Styling:</strong> CSS classes control appearance</li>
+          </ul>
+        </div>
+      </mat-expansion-panel>
     </div>
   }
   

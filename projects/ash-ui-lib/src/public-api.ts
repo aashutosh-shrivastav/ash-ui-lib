@@ -52,3 +52,7 @@ export type {
   YAxisConfig,
   XAxisConfig
 } from './lib/ash-chart/types';
+
+// AshCalendar exports
+export { AshCalendar } from './lib/ash-calendar/ash-calendar';
+export type { DateStyle } from './lib/ash-calendar/models/date-style.model';
