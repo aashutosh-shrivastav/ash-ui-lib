@@ -1,0 +1,67 @@
+<mat-card class="ash-calendar-container" [class.ash-calendar-rtl]="isRtl()">
+  <mat-card-content class="ash-calendar-content">
+    <!-- Calendar Header with Navigation -->
+    <div class="ash-calendar-header">
+      <button
+        mat-icon-button
+        class="ash-calendar-nav-button"
+        (click)="previousMonth()"
+        [disabled]="disabled()"
+        [attr.aria-label]="'Previous month'"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <h2 class="ash-calendar-title">
+        {{ displayMonth() }}
+      </h2>
+
+      <button
+        mat-icon-button
+        class="ash-calendar-nav-button"
+        (click)="nextMonth()"
+        [disabled]="disabled()"
+        [attr.aria-label]="'Next month'"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="ash-calendar-grid" role="presentation">
+      <!-- Weekday Headers -->
+      <div class="ash-calendar-weekdays">
+        @for (day of weekdayLabels(); track $index) {
+          <div class="ash-calendar-weekday" role="columnheader" aria-label="{{ day }}">
+            {{ day }}
+          </div>
+        }
+      </div>
+
+      <!-- Date Grid -->
+      <div class="ash-calendar-weeks">
+        @for (week of calendarGrid(); track $index) {
+          <div class="ash-calendar-week">
+            @for (date of week; track (date ? getDateKey(date) : $index)) {
+              <button
+                type="button"
+                class="ash-calendar-cell"
+                [ngClass]="getDateClasses(date)"
+                [disabled]="isDateDisabled(date) || isOtherMonth(date)"
+                [attr.aria-label]="date ? (date | date: 'medium') : ''"
+                [title]="getDateTooltip(date) || ''"
+                (click)="onDateSelected(date)"
+              >
+                @if (date && !isOtherMonth(date)) {
+                  <span class="ash-calendar-cell-content">
+                    {{ date.getDate() }}
+                  </span>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
